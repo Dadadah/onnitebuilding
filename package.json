@@ -1,0 +1,10 @@
+{
+	"author": "Voltaism",
+	"version": "1.0",
+        "client_scripts": [
+                "client/construct_cl.lua"
+        ],
+        "server_scripts": [
+                "server/construct.lua"
+        ]
+}
