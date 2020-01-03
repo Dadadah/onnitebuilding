@@ -70,10 +70,10 @@ local lastcons = nil
 local lastconsactivated = nil
 function tickhook(DeltaSeconds)
    if consactivated then
-    if remove_obj==false then
-    lastconsactivated=true
     local ScreenX, ScreenY = GetScreenSize()
     SetMouseLocation(ScreenX/2, ScreenY/2)
+    if remove_obj==false then
+    lastconsactivated=true
     local x,y,z = GetMouseHitLocation()
       if (x~=lasthitposx or y~=lasthitposy or z~=lasthitposz or lastang~=currotyaw or lastconsactivated~=consactivated or lastcons~=curstruct) then
           lasthitposx=x
@@ -97,15 +97,6 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
-function SetObjColor(obj, HexColor) --thx Kuzkay#9999
-    local color = "0x" .. HexColor
-    local StaticMeshComponent = GetObjectStaticMeshComponent(obj)
-    StaticMeshComponent:SetMaterial(0, UMaterialInterface.LoadFromAsset("/Game/Scripting/Materials/MI_TranslucentLit"))
-    local MaterialInstance = StaticMeshComponent:CreateDynamicMaterialInstance(0)
-    local r, g, b, a = HexToRGBAFloat(color)
-    MaterialInstance:SetColorParameter("BaseColor", FLinearColor(r, g, b, 0.4))
-end
-
 AddRemoteEvent("Createdobj",function(objid,collision)
     local delay = 50
     if (GetPing()~=0) then
@@ -115,20 +106,6 @@ AddRemoteEvent("Createdobj",function(objid,collision)
     GetObjectActor(objid):SetActorEnableCollision(collision)
     SetObjectCastShadow(objid, collision)
     EnableObjectHitEvents(objid , collision)
-    --[[if (collision==false) then
-    if (shadows[objid]) then
-    SetObjColor(objid,808080)
-    else
-        local StaticMeshComponent = GetObjectStaticMeshComponent(objid)
-        AddPlayerChat(StaticMeshComponent:GetMaterial())
-        shadows[objid] = StaticMeshComponent:GetMaterial()
-        SetObjColor(objid,808080)
-    end
-    else
-        local StaticMeshComponent = GetObjectStaticMeshComponent(objid)
-        StaticMeshComponent:SetMaterial(0,shadows[objid])
-        table.remove(shadows,objid)
-    end]]--
     end)
 end)
 
@@ -144,18 +121,16 @@ function render_cons()
     DrawText(5, 450, "Press R to rotate your construction")
     DrawText(5, 475, "Use the mouse wheel to change your object")
     DrawText(5, 500, "Use the left click to place your object")
-    --[[if remove_obj then
-        local ScreenX, ScreenY = GetScreenSize()
-         SetMouseLocation(ScreenX/2, ScreenY/2)
+    if remove_obj then
         local entityType, entityId = GetMouseHitEntity()
             if (entityId~=0) then
-                local x, y, z = GetPlayerLocation(entityId)
+                local x, y, z = GetObjectLocation(entityId)
                 local bResult, ScreenX, ScreenY = WorldToScreen(x, y, z)
                 if bResult then
                     DrawText(ScreenX-40, ScreenY, "Left Click to remove")
                 end
             end
-    end]]--
+    end
     end
 end
 
