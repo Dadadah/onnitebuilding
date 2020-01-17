@@ -69,7 +69,7 @@ local lastcons = nil
 local lastconsactivated = nil
 
 function tickhook(DeltaSeconds)
-    if consactivated && my_shadow ~= 0 then
+    if consactivated and my_shadow ~= 0 then
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if remove_obj == false then
