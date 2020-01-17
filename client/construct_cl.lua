@@ -86,7 +86,7 @@ function tickhook(DeltaSeconds)
 					else
 						local actor = GetObjectActor(my_shadow)
 						actor:SetActorLocation(FVector(x, y, z))
-						actor:SetActorRotation(FVector(0, currotyaw, 0))
+						actor:SetActorRotation(FRotator(0, 0, currotyaw))
 					end
 			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
