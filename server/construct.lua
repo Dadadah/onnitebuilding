@@ -318,6 +318,9 @@ AddRemoteEvent("Removeobj", Removeobj)
 
 function RemoveConstruction(constructedIndex)
     DestroyObject(constructed[constructedIndex].mapobjid)
-    table.remove(constructedByID, constructed[constructedIndex].mapobjid)
+
+    -- We can't use table.remove on this table because this array is sparse, it won't always start at 1 and it won't always be consecutive.
+    constructedByID[constructed[constructedIndex].mapobjid] = nil
+
     table.remove(constructed, constructedIndex)
 end
