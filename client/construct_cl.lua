@@ -6,7 +6,7 @@ local remove_obj = false
 
 local numb_of_objs = 0
 
-local shadows = {}
+local my_shadow = 0
 
 -- Constants
 local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
@@ -85,7 +85,8 @@ function tickhook(DeltaSeconds)
 				if (x ~= 0) then
 					local entityType, entityId = GetMouseHitEntity()
 					local pitch,yaw,roll = GetCameraRotation()
-			    	CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
+					GetObjectActor(my_shadow):SetActorRelativeLocation(x, y, z)
+			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
 					AddPlayerChat("Please look at valid locations")
 				end
@@ -101,6 +102,8 @@ function GhostNewObject(object)
 	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
 			GetObjectActor(object):SetActorHiddenInGame(true)
+		else
+			my_shadow = object
 		end
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
@@ -113,6 +116,8 @@ function GhostObject(object, prop, val)
 	if prop == GHOSTED_PROPERTY_NAME then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
 			GetObjectActor(object):SetActorHiddenInGame(val)
+		elseif val == true then
+			my_shadow = object
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
