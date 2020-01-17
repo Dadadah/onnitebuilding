@@ -84,7 +84,9 @@ function tickhook(DeltaSeconds)
 					if my_shadow == 0 then
 						CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 					else
-						GetObjectActor(my_shadow):SetActorRelativeLocation(FVector(x, y, z))
+						local actor = GetObjectActor(my_shadow)
+						actor:SetActorLocation(FVector(x, y, z))
+						actor:SetActorRotation(FVector(0, currotyaw, 0))
 					end
 			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
@@ -102,6 +104,7 @@ function GhostNewObject(object)
 			GetObjectActor(object):SetActorHiddenInGame(true)
 		else
 			my_shadow = object
+			actor:GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
@@ -116,6 +119,7 @@ function GhostObject(object, prop, val)
 			GetObjectActor(object):SetActorHiddenInGame(val)
 		elseif val then
 			my_shadow = object
+			actor:GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
