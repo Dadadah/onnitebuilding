@@ -268,7 +268,7 @@ function Createobj(ply)
         tbltoinsert.owner = tostring(GetPlayerSteamId(ply))
 
         -- Insert the index of the new object into the ByID table
-        constructedByID[tbltoinsert.mapobjid] = #constructed
+        constructedByID[tbltoinsert.mapobjid] = #constructed + 1
 
         table.insert(constructed, tbltoinsert)
         for k, v in ipairs(GetAllPlayers()) do
