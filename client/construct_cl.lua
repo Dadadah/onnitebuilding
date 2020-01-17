@@ -97,30 +97,23 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
-function GhostObject(object)
+function GhostNewObject(object)
 	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
 	    EnableObjectHitEvents(object, false)
 	end
 end
-AddEvent("OnObjectStreamIn", GhostObject)
+AddEvent("OnObjectStreamIn", GhostNewObject)
 
-AddEvent("OnObjectNetworkUpdatePropertyValue", function()
-	AddPlayerChat("TESTYTEST")
-end)
-
-AddRemoteEvent("Createdobj", function(objid, collision)
-    local delay = 50
-    if (GetPing() ~= 0) then
-        delay = GetPing() * 6
-    end
-    Delay(delay,function()
-	    GetObjectActor(objid):SetActorEnableCollision(collision)
-	    SetObjectCastShadow(objid, collision)
-	    EnableObjectHitEvents(objid, collision)
-    end)
-end)
+function GhostObject(object, prop, val)
+	if prop == GHOSTED_PROPERTY_NAME then
+		GetObjectActor(object):SetActorEnableCollision(not val)
+	    SetObjectCastShadow(object, not val)
+	    EnableObjectHitEvents(object, not val)
+	end
+end
+AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
 AddRemoteEvent("numberof_objects", function(number)
     numb_of_objs = number

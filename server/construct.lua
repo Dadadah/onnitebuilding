@@ -278,9 +278,6 @@ function Createobj(ply)
         constructedByID[tbltoinsert.mapobjid] = #constructed + 1
 
         table.insert(constructed, tbltoinsert)
-        for k, v in ipairs(GetAllPlayers()) do
-            CallRemoteEvent(v, "Createdobj", shadows[ply].mapobjid, true)
-        end
         table.remove(shadows, ply)
     end
 end
