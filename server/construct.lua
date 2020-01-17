@@ -22,8 +22,8 @@ local constructedByID = {}
 local shadows = {}
 
 -- Constants
-local GHOSTED_PROPERTY_NAME = GetPackageName() + "::ghosted"
-local OWNER_PROPERTY_NAME = GetPackageName() + "::owner"
+local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
 
 function rshadow(ply)
     if (shadows[ply]) then
@@ -68,7 +68,7 @@ function constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
         -- Set the object as ghosted using package name as a prefix to prevent conflicts with other values. - Credit nexus#4880
         SetObjectPropertyValue(identifier, GHOSTED_PROPERTY_NAME, true, true)
         SetObjectPropertyValue(identifier, OWNER_PROPERTY_NAME, ply, true)
-        
+
     else
         print("Error at CreateObject Construction mod")
     end

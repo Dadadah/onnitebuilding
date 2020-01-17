@@ -9,8 +9,8 @@ local numb_of_objs = 0
 local shadows = {}
 
 -- Constants
-local GHOSTED_PROPERTY_NAME = GetPackageName() + "::ghosted"
-local OWNER_PROPERTY_NAME = GetPackageName() + "::owner"
+local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
 
 function OnKeyPress(key)
 	if key == "Y" then
