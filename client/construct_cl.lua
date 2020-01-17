@@ -6,8 +6,6 @@ local remove_obj = false
 
 local numb_of_objs = 0
 
-local my_shadow = 0
-
 -- Constants
 local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
 local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
@@ -81,14 +79,7 @@ function tickhook(DeltaSeconds)
 				if (x ~= 0) then
 					local entityType, entityId = GetMouseHitEntity()
 					local pitch,yaw,roll = GetCameraRotation()
-					if my_shadow == 0 then
-						CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
-					else
-						local actor = GetObjectActor(my_shadow)
-						actor:SetActorLocation(FVector(x, y, z))
-						actor:SetActorRotation(FRotator(0, 0, currotyaw))
-					end
-			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
+			    	CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
 					AddPlayerChat("Please look at valid locations")
 				end
@@ -102,9 +93,6 @@ function GhostNewObject(object)
 	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
 			GetObjectActor(object):SetActorHiddenInGame(true)
-		else
-			my_shadow = object
-			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Movable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
@@ -117,9 +105,6 @@ function GhostObject(object, prop, val)
 	if prop == GHOSTED_PROPERTY_NAME then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
 			GetObjectActor(object):SetActorHiddenInGame(val)
-		elseif val then
-			my_shadow = object
-			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Movable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
