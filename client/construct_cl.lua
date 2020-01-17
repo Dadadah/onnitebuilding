@@ -104,7 +104,7 @@ function GhostNewObject(object)
 			GetObjectActor(object):SetActorHiddenInGame(true)
 		else
 			my_shadow = object
-			actor:GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
+			GetObjectActor(my_shadow):GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
@@ -119,7 +119,7 @@ function GhostObject(object, prop, val)
 			GetObjectActor(object):SetActorHiddenInGame(val)
 		elseif val then
 			my_shadow = object
-			actor:GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
+			GetObjectActor(my_shadow):GetStaticMeshComponent():SetMobility(EComponentMobility.Moveable)
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
