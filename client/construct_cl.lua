@@ -85,7 +85,7 @@ function tickhook(DeltaSeconds)
 				if (x ~= 0) then
 					local entityType, entityId = GetMouseHitEntity()
 					local pitch,yaw,roll = GetCameraRotation()
-					GetObjectActor(my_shadow):SetActorRelativeLocation(x, y, z)
+					GetObjectActor(my_shadow):SetActorRelativeLocation(FVector(x, y, z))
 			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
 					AddPlayerChat("Please look at valid locations")
@@ -116,7 +116,7 @@ function GhostObject(object, prop, val)
 	if prop == GHOSTED_PROPERTY_NAME then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
 			GetObjectActor(object):SetActorHiddenInGame(val)
-		elseif val == true then
+		elseif val then
 			my_shadow = object
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
