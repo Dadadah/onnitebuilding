@@ -8,7 +8,6 @@ objs[3] = 387 --Don't change this line
 --objs[4] = 1003
 --objs[index] = object id -- https://dev.playonset.com/wiki/Objects
 
-
 local admins_remove = {}
 
 --admins_remove["76561197972837186"] = true -- me
@@ -22,16 +21,19 @@ local constructedByID = {}
 
 local shadows = {}
 
+-- Constants
+local GHOSTED_PROPERTY_NAME = GetPackageName() + "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() + "::owner"
+
 function rshadow(ply)
     if (shadows[ply]) then
         DestroyObject(shadows[ply].mapobjid)
         table.remove(shadows, ply)
     end
  end
-
  AddRemoteEvent("RemoveShadow",rshadow)
 
-function constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
+function constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
     local anglex = 0
     local size = 1
     if (conid == 1) then
@@ -57,14 +59,16 @@ function constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
         size = 0.25
         z = z + 25
     end
-    local identifier = CreateObject(objs[conid], x, y, z , anglex, angle, 0, size, size, size)
+    local identifier = CreateObject(objs[conid], x, y, z, anglex, angle, 0, size, size, size)
     if (identifier~=false) then
         shadows[ply] = {}
         shadows[ply].objid = conid
         shadows[ply].mapobjid = identifier
-        for k,v in ipairs(GetAllPlayers()) do
-           CallRemoteEvent(v,"Createdobj",identifier,false)
-        end
+
+        -- Set the object as ghosted using package name as a prefix to prevent conflicts with other values. - Credit nexus#4880
+        SetObjectPropertyValue(identifier, GHOSTED_PROPERTY_NAME, true, true)
+        SetObjectPropertyValue(identifier, OWNER_PROPERTY_NAME, ply, true)
+        
     else
         print("Error at CreateObject Construction mod")
     end
@@ -229,12 +233,12 @@ function upcons(ply, conid, angle, x, y, z, hitentity, camrot)
                 end
                 SetObjectRotation(shadows[ply].mapobjid, anglex, angle, 0)
             else
-                AddPlayerChat(ply,"Too far from you")
+                AddPlayerChat(ply, "Too far from you")
             end
         else
             DestroyObject(shadows[ply].mapobjid)
-            table.remove(shadows,ply)
-            constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
+            table.remove(shadows, ply)
+            constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
         end
     else
         constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
@@ -267,6 +271,9 @@ function Createobj(ply)
         tbltoinsert.objid = shadows[ply].objid
         tbltoinsert.owner = tostring(GetPlayerSteamId(ply))
 
+        -- Disable ghosting on this object
+        SetObjectPropertyValue(tbltoinsert.mapobjid, GHOSTED_PROPERTY_NAME, false, true)
+
         -- Insert the index of the new object into the ByID table
         constructedByID[tbltoinsert.mapobjid] = #constructed + 1
 
@@ -277,7 +284,6 @@ function Createobj(ply)
         table.remove(shadows, ply)
     end
 end
-
 AddRemoteEvent("Createcons", Createobj)
 
 function coll_desync_workaround()
@@ -288,7 +294,6 @@ function coll_desync_workaround()
         end
     end
 end
-
 AddEvent("OnPackageStart", function()
     CreateTimer(coll_desync_workaround, 1000)
 end)

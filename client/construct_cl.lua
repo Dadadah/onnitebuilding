@@ -8,6 +8,10 @@ local numb_of_objs = 0
 
 local shadows = {}
 
+-- Constants
+local GHOSTED_PROPERTY_NAME = GetPackageName() + "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() + "::owner"
+
 function OnKeyPress(key)
 	if key == "Y" then
         consactivated = not consactivated
@@ -54,6 +58,7 @@ function OnKeyPress(key)
     end
 end
 AddEvent("OnKeyPress", OnKeyPress)
+
 local lasthitposx = nil
 local lasthitposy = nil
 local lasthitposz = nil
@@ -92,6 +97,19 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
+function GhostObject(object)
+	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
+		GetObjectActor(object):SetActorEnableCollision(false)
+	    SetObjectCastShadow(object, false)
+	    EnableObjectHitEvents(object, false)
+	end
+end
+AddEvent("OnObjectStreamIn", GhostObject)
+
+AddEvent("OnObjectNetworkUpdatePropertyValue", function()
+	AddPlayerChat("TESTYTEST")
+end)
+
 AddRemoteEvent("Createdobj", function(objid, collision)
     local delay = 50
     if (GetPing() ~= 0) then
@@ -100,7 +118,7 @@ AddRemoteEvent("Createdobj", function(objid, collision)
     Delay(delay,function()
 	    GetObjectActor(objid):SetActorEnableCollision(collision)
 	    SetObjectCastShadow(objid, collision)
-	    EnableObjectHitEvents(objid , collision)
+	    EnableObjectHitEvents(objid, collision)
     end)
 end)
 
