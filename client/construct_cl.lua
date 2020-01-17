@@ -99,6 +99,9 @@ AddEvent("OnGameTick", tickhook)
 
 function GhostNewObject(object)
 	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
+		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
+			GetObjectActor():SetActorHiddenInGame(true)
+		end
 		GetObjectActor(object):SetActorEnableCollision(false)
 	    SetObjectCastShadow(object, false)
 	    EnableObjectHitEvents(object, false)
@@ -108,6 +111,9 @@ AddEvent("OnObjectStreamIn", GhostNewObject)
 
 function GhostObject(object, prop, val)
 	if prop == GHOSTED_PROPERTY_NAME then
+		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
+			GetObjectActor():SetActorHiddenInGame(not val)
+		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
 	    EnableObjectHitEvents(object, not val)
