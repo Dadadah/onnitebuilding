@@ -112,7 +112,7 @@ AddEvent("OnObjectStreamIn", GhostNewObject)
 function GhostObject(object, prop, val)
 	if prop == GHOSTED_PROPERTY_NAME then
 		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
-			GetObjectActor(object):SetActorHiddenInGame(not val)
+			GetObjectActor(object):SetActorHiddenInGame(val)
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
