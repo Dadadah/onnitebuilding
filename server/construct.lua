@@ -84,8 +84,8 @@ function upcons(ply, conid, angle, x, y, z, hitentity, camrot)
                 local nofound = true
                 k = constructedByID[hitentity]
                 if k ~= nil then
-                    v = constructed[k]
-                    if v.objid == 1 then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 1 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         nofound = false
@@ -139,8 +139,8 @@ function upcons(ply, conid, angle, x, y, z, hitentity, camrot)
                 z = z + 175
                 k = constructedByID[hitentity]
                 if k ~= nil then
-                    v = constructed[k]
-                    if v.objid == 2 then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 2 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         local valtoadd = 0
@@ -170,8 +170,8 @@ function upcons(ply, conid, angle, x, y, z, hitentity, camrot)
                 z = z + 25
                 k = constructedByID[hitentity]
                 if k ~= nil then
-                    v = constructed[k]
-                    if v.objid == 3 then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 3 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         local valtoadd = 0
@@ -304,7 +304,10 @@ function Removeobj(ply, hitentity)
     if i == nil then
         return
     end
-    v = constructed[i]
+    local v = constructed[i]
+    if v == nil then
+        return
+    end
     if (v.owner == steamid or admins_remove[steamid]) then
         RemoveConstruction(i)
     else
