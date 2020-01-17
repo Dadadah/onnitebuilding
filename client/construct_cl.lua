@@ -6,7 +6,9 @@ local remove_obj = false
 
 local numb_of_objs = 0
 
-local shadows = {}
+-- Constants
+local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
 
 function OnKeyPress(key)
 	if key == "Y" then
@@ -54,6 +56,7 @@ function OnKeyPress(key)
     end
 end
 AddEvent("OnKeyPress", OnKeyPress)
+
 local lasthitposx = nil
 local lasthitposy = nil
 local lasthitposz = nil
@@ -61,22 +64,18 @@ local lastang = nil
 
 local lastcons = nil
 
-local lastconsactivated = nil
-
 function tickhook(DeltaSeconds)
     if consactivated then
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if remove_obj == false then
-		lastconsactivated = true
 		local x,y,z = GetMouseHitLocation()
-			if (x ~= lasthitposx or y ~= lasthitposy or z ~= lasthitposz or lastang ~= currotyaw or lastconsactivated ~= consactivated or lastcons ~= curstruct) then
+			if (x ~= lasthitposx or y ~= lasthitposy or z ~= lasthitposz or lastang ~= currotyaw or lastcons ~= curstruct) then
 				lasthitposx = x
 				lasthitposy = y
 				lasthitposz = z
 				lastang = currotyaw
 				lastcons = curstruct
-				lastconsactivated = true
 				if (x ~= 0) then
 					local entityType, entityId = GetMouseHitEntity()
 					local pitch,yaw,roll = GetCameraRotation()
@@ -86,23 +85,33 @@ function tickhook(DeltaSeconds)
 				end
 		    end
 		end
-	else
-        lastconsactivated=false
-    end
+	end
 end
 AddEvent("OnGameTick", tickhook)
 
-AddRemoteEvent("Createdobj", function(objid, collision)
-    local delay = 50
-    if (GetPing() ~= 0) then
-        delay = GetPing() * 6
-    end
-    Delay(delay,function()
-	    GetObjectActor(objid):SetActorEnableCollision(collision)
-	    SetObjectCastShadow(objid, collision)
-	    EnableObjectHitEvents(objid , collision)
-    end)
-end)
+function GhostNewObject(object)
+	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
+		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
+			GetObjectActor(object):SetActorHiddenInGame(true)
+		end
+		GetObjectActor(object):SetActorEnableCollision(false)
+	    SetObjectCastShadow(object, false)
+	    EnableObjectHitEvents(object, false)
+	end
+end
+AddEvent("OnObjectStreamIn", GhostNewObject)
+
+function GhostObject(object, prop, val)
+	if prop == GHOSTED_PROPERTY_NAME then
+		if GetObjectPropertyValue(object, OWNER_PROPERTY_NAME) ~= GetPlayerId() then
+			GetObjectActor(object):SetActorHiddenInGame(val)
+		end
+		GetObjectActor(object):SetActorEnableCollision(not val)
+	    SetObjectCastShadow(object, not val)
+	    EnableObjectHitEvents(object, not val)
+	end
+end
+AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
 AddRemoteEvent("numberof_objects", function(number)
     numb_of_objs = number

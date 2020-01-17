@@ -8,7 +8,6 @@ objs[3] = 387 --Don't change this line
 --objs[4] = 1003
 --objs[index] = object id -- https://dev.playonset.com/wiki/Objects
 
-
 local admins_remove = {}
 
 --admins_remove["76561197972837186"] = true -- me
@@ -18,7 +17,13 @@ local pitchstairs = 45
 
 local constructed = {}
 
+local constructedByID = {}
+
 local shadows = {}
+
+-- Constants
+local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
+local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
 
 function rshadow(ply)
     if (shadows[ply]) then
@@ -26,10 +31,9 @@ function rshadow(ply)
         table.remove(shadows, ply)
     end
  end
-
  AddRemoteEvent("RemoveShadow",rshadow)
 
-function constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
+function constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
     local anglex = 0
     local size = 1
     if (conid == 1) then
@@ -55,22 +59,24 @@ function constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
         size = 0.25
         z = z + 25
     end
-    local identifier = CreateObject(objs[conid], x, y, z , anglex, angle, 0, size, size, size)
+    local identifier = CreateObject(objs[conid], x, y, z, anglex, angle, 0, size, size, size)
     if (identifier~=false) then
         shadows[ply] = {}
         shadows[ply].objid = conid
         shadows[ply].mapobjid = identifier
-        for k,v in ipairs(GetAllPlayers()) do
-           CallRemoteEvent(v,"Createdobj",identifier,false)
-        end
+
+        -- Set the object as ghosted using package name as a prefix to prevent conflicts with other values. - Credit nexus#4880
+        SetObjectPropertyValue(identifier, GHOSTED_PROPERTY_NAME, true, true)
+        SetObjectPropertyValue(identifier, OWNER_PROPERTY_NAME, ply, true)
+
     else
         print("Error at CreateObject Construction mod")
     end
 end
 
-function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
+function upcons(ply, conid, angle, x, y, z, hitentity, camrot)
     if (shadows[ply]) then
-        if (shadows[ply].objid==conid) then
+        if (shadows[ply].objid == conid) then
             --AddPlayerChat(ply,"X : " .. x .. " Y : " .. y .. " Z : " .. z .. " Angle : " .. angle)
             if (conid == 1) then
                 local befangle = angle
@@ -80,19 +86,17 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
                    angle = 90
                 end
                 local nofound = true
-                for k,v in ipairs(constructed) do -- IDK if you can read the code below
-                    if (v.mapobjid == hitentity and v.objid == 1) then
+                k = constructedByID[hitentity]
+                if k ~= nil then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 1 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         nofound = false
                         local valtoadd = 0
                         if (roty == 90 or roty == -90) then
                             if (y - oy > 300) then
-                                if (angle == 90) then
-                                    valtoadd = 600
-                                else
-                                    valtoadd = 600
-                                end
+                                valtoadd = 600
                             else
                                 if (angle == 90) then
                                     valtoadd = -600
@@ -102,11 +106,7 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
                             end
                         else
                             if (x - ox > 300) then
-                                if (angle == 0) then
-                                    valtoadd = 600
-                                else
-                                     valtoadd = 600
-                                end
+                                valtoadd = 600
                             else
                                 if (angle == 0) then
                                     valtoadd = -600
@@ -141,8 +141,10 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
             end
             if (conid == 2) then
                 z = z + 175
-                for k,v in ipairs(constructed) do
-                    if (v.mapobjid == hitentity and v.objid == 2) then
+                k = constructedByID[hitentity]
+                if k ~= nil then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 2 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         local valtoadd = 0
@@ -170,8 +172,10 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
             end
             if (conid == 3) then
                 z = z + 25
-                for k, v in ipairs(constructed) do
-                    if (v.mapobjid == hitentity and v.objid == 3) then
+                k = constructedByID[hitentity]
+                if k ~= nil then
+                    local v = constructed[k]
+                    if v ~= nil and v.objid == 3 then
                         local rotx , roty , rotz = GetObjectRotation(hitentity)
                         local ox, oy, oz = GetObjectLocation(hitentity)
                         local valtoadd = 0
@@ -221,7 +225,7 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
             end
             local px, py, pz = GetPlayerLocation(ply)
             local dist = GetDistance3D(px, py, pz, x, y, z)
-            if (dist<10000) then
+            if (dist < 10000) then
                 SetObjectLocation(shadows[ply].mapobjid, x, y, z)
                 local anglex = 0
                 if (conid == 2) then
@@ -229,19 +233,18 @@ function upcons(ply,conid,angle,x,y,z,hitentity,camrot)
                 end
                 SetObjectRotation(shadows[ply].mapobjid, anglex, angle, 0)
             else
-                AddPlayerChat(ply,"Too far from you")
+                AddPlayerChat(ply, "Too far from you")
             end
         else
             DestroyObject(shadows[ply].mapobjid)
-            table.remove(shadows,ply)
-            constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
+            table.remove(shadows, ply)
+            constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
         end
     else
-        constructshadow(ply,conid,angle,x,y,z,hitentity,camrot)
+        constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
     end
 end
-
-AddRemoteEvent("UpdateCons",upcons)
+AddRemoteEvent("UpdateCons", upcons)
 
 function OnPlayerQuit(ply)
     rshadow(ply)
@@ -252,8 +255,7 @@ function OnPlayerQuit(ply)
 
         while index < #constructed + 1 do
             if (constructed[index].owner == steamid) then
-                DestroyObject(constructed[index].mapobjid)
-                table.remove(constructed, index)
+                RemoveConstruction(index)
                 index = index - 1
             end
             index = index + 1
@@ -264,31 +266,31 @@ AddEvent("OnPlayerQuit", OnPlayerQuit)
 
 function Createobj(ply)
     if (shadows[ply]) then
-        local objtocreate = shadows[ply].mapobjid
         local tbltoinsert = {}
         tbltoinsert.mapobjid = shadows[ply].mapobjid
         tbltoinsert.objid = shadows[ply].objid
         tbltoinsert.owner = tostring(GetPlayerSteamId(ply))
-        table.insert(constructed,tbltoinsert)
-        for k,v in ipairs(GetAllPlayers()) do
-            CallRemoteEvent(v, "Createdobj", shadows[ply].mapobjid, true)
-        end
+
+        -- Disable ghosting on this object
+        SetObjectPropertyValue(tbltoinsert.mapobjid, GHOSTED_PROPERTY_NAME, false, true)
+
+        -- Insert the index of the new object into the ByID table
+        constructedByID[tbltoinsert.mapobjid] = #constructed + 1
+
+        table.insert(constructed, tbltoinsert)
         table.remove(shadows, ply)
     end
 end
-
 AddRemoteEvent("Createcons", Createobj)
 
 function coll_desync_workaround()
     for kobj, vobj in ipairs(shadows) do
         local identifier = vobj.mapobjid
-        for k,v in ipairs(GetAllPlayers()) do
+        for k, v in ipairs(GetAllPlayers()) do
            CallRemoteEvent(v, "Createdobj", identifier, false)
         end
     end
 end
-
-
 AddEvent("OnPackageStart", function()
     CreateTimer(coll_desync_workaround, 1000)
 end)
@@ -298,17 +300,29 @@ function OnPlayerSpawn(ply)
 end
 AddEvent("OnPlayerSpawn", OnPlayerSpawn)
 
-function Removeobj(ply,hitentity)
+function Removeobj(ply, hitentity)
     local steamid = tostring(GetPlayerSteamId(ply))
-    for i,v in ipairs(constructed) do
-        if (hitentity==v.mapobjid) then
-            if (v.owner == steamid or admins_remove[steamid]) then
-                DestroyObject(hitentity)
-                table.remove(constructed,i)
-            else
-                AddPlayerChat(ply,"You can't remove this object")
-            end
-        end
+    i = constructedByID[hitentity]
+    if i == nil then
+        return
+    end
+    local v = constructed[i]
+    if v == nil then
+        return
+    end
+    if (v.owner == steamid or admins_remove[steamid]) then
+        RemoveConstruction(i)
+    else
+        AddPlayerChat(ply, "You can't remove this object")
     end
 end
 AddRemoteEvent("Removeobj", Removeobj)
+
+function RemoveConstruction(constructedIndex)
+    DestroyObject(constructed[constructedIndex].mapobjid)
+
+    -- We can't use table.remove on this table because this array is sparse, it won't always start at 1 and it won't always be consecutive.
+    constructedByID[constructed[constructedIndex].mapobjid] = nil
+
+    table.remove(constructed, constructedIndex)
+end
