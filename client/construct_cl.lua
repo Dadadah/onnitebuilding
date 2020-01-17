@@ -66,35 +66,33 @@ local lastang = nil
 
 local lastcons = nil
 
-local lastconsactivated = nil
-
 function tickhook(DeltaSeconds)
-    if consactivated and my_shadow ~= 0 then
+    if consactivated then
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if remove_obj == false then
-		lastconsactivated = true
 		local x,y,z = GetMouseHitLocation()
-			if (x ~= lasthitposx or y ~= lasthitposy or z ~= lasthitposz or lastang ~= currotyaw or lastconsactivated ~= consactivated or lastcons ~= curstruct) then
+			if (x ~= lasthitposx or y ~= lasthitposy or z ~= lasthitposz or lastang ~= currotyaw or lastcons ~= curstruct) then
 				lasthitposx = x
 				lasthitposy = y
 				lasthitposz = z
 				lastang = currotyaw
 				lastcons = curstruct
-				lastconsactivated = true
 				if (x ~= 0) then
 					local entityType, entityId = GetMouseHitEntity()
 					local pitch,yaw,roll = GetCameraRotation()
-					GetObjectActor(my_shadow):SetActorRelativeLocation(FVector(x, y, z))
+					if my_shadow == 0 then
+						CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
+					else
+						GetObjectActor(my_shadow):SetActorRelativeLocation(FVector(x, y, z))
+					end
 			    	--CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
 				else
 					AddPlayerChat("Please look at valid locations")
 				end
 		    end
 		end
-	else
-        lastconsactivated=false
-    end
+	end
 end
 AddEvent("OnGameTick", tickhook)
 
