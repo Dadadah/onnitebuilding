@@ -120,6 +120,7 @@ function getConstructOffset(constructID, stackID)
 	local yxselfoff = 0
 	local xyselfoff = 0
 	local yyselfoff = 0
+	local zselfoff = 0
 	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
 	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
 	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
@@ -131,10 +132,11 @@ function getConstructOffset(constructID, stackID)
 		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.sin(math.rad(currotyaw))
 		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.cos(math.rad(currotyaw))
 		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.sin(math.rad(currotyaw))
+		zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
 	end
 	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
 	yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff, -- YPos
-	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff + CONSTRUCTION_OBJECTS[constructID].SelfOffset[3], -- ZPos
+	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff + zselfoff, -- ZPos
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
