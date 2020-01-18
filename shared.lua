@@ -1,6 +1,7 @@
 -- Constants
 GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
 OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
+CONSTRUCTION_ID_PROPERTY_NAME = GetPackageName() .. "::construction_id"
 
 CONSTRUCTION_OBJECTS = {}
 

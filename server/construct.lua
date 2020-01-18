@@ -32,6 +32,7 @@ function constructshadow(ply, conid)
         -- Set the object as ghosted using package name as a prefix to prevent conflicts with other values. - Credit nexus#4880
         SetObjectPropertyValue(identifier, GHOSTED_PROPERTY_NAME, true, true)
         SetObjectPropertyValue(identifier, OWNER_PROPERTY_NAME, ply, true)
+        SetObjectPropertyValue(identifier, CONSTRUCTION_ID_PROPERTY_NAME, conid, true)
 
     else
         print("Error at CreateObject Construction mod")

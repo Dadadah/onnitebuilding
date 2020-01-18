@@ -48,10 +48,24 @@ function OnKeyPress(key)
 			currotyaw = currotyaw % 360
 	    end
 	    if key == "Left Mouse Button" then
+			local ScreenX, ScreenY = GetScreenSize()
+			SetMouseLocation(ScreenX/2, ScreenY/2)
+			local _, entityId = GetMouseHitEntity()
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-					local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
+					local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+					local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+					if entConID ~= nil then
+						-- local directionToStack
+						x, y, z = GetObjectLocation(entityId)
+						local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
+						local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
+						local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
+						local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
+						xpos = xpos - xxmid - xymid
+						ypos = xpos - yxmid - yymid
+					end
 					-- Uncomment to get size of a new object
 					-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
 					-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
@@ -61,9 +75,6 @@ function OnKeyPress(key)
 					AddPlayerChat("Please look at valid locations")
 				end
             else
-                local ScreenX, ScreenY = GetScreenSize()
-                SetMouseLocation(ScreenX/2, ScreenY/2)
-                local _, entityId = GetMouseHitEntity()
                 if (entityId ~= 0) then
                 	CallRemoteEvent("Removeobj", entityId)
                 end
@@ -82,7 +93,7 @@ function tickhook(DeltaSeconds)
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
 				local x, y, z = GetMouseHitLocation()
-				local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
+				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
 				actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 			end
@@ -91,13 +102,17 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
-function getShadowPositionAndRotation()
+function getConstructOffset()
 	local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
 	local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
 	local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
 	local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
-	return CONSTRUCTION_OBJECTS[curstruct].Offset[1] + xxmid + xymid, -- XPos
-	CONSTRUCTION_OBJECTS[curstruct].Offset[2] + yxmid + yymid, -- YPos
+	local xxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.cos(math.rad(currotyaw))
+	local yxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.sin(math.rad(currotyaw))
+	local xyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.cos(math.rad(currotyaw))
+	local yyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.sin(math.rad(currotyaw))
+	return xxoff + xyoff + xxmid + xymid, -- XPos
+	yyoff + yxoff + yxmid + yymid, -- YPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
