@@ -52,9 +52,9 @@ function OnKeyPress(key)
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
 					local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
-					local xsize, ysize, zsize = GetObjectSize(my_shadow)
-					AddPlayerChat("pos x: " .. xpos .. " y: " .. ypos .. " z: " .. zpos)
-					AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
+					-- Uncomment to get size of a new object
+					-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
+					-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
 	            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
 					CallRemoteEvent("UpdateCons", curstruct)
 				else
@@ -95,9 +95,9 @@ function getShadowPositionAndRotation()
 	return CONSTRUCTION_OBJECTS[curstruct].Offset[1] + CONSTRUCTION_OBJECTS[curstruct].Middle[1], -- XPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[2] + CONSTRUCTION_OBJECTS[curstruct].Middle[2], -- YPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
-	0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
-	currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
-	0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
+	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
+	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
+	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
 end
 
 function GhostNewObject(object)
