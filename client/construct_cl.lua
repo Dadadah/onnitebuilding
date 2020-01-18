@@ -125,8 +125,8 @@ function getConstructOffset(constructID, stackID)
 	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
 	if stackID == constructID then
 		xglobaloff = -1 * xglobaloff
-		yglobaloff = -1 * xglobaloff
-		xglobaloff = 0
+		yglobaloff = -1 * yglobaloff
+		zglobaloff = 0
 		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.cos(math.rad(currotyaw))
 		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.sin(math.rad(currotyaw))
 		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.cos(math.rad(currotyaw))
