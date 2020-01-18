@@ -103,14 +103,14 @@ function Removeobj(ply, hitentity)
         return
     end
     if (v.owner == steamid or admins_remove[steamid]) then
-        RemoveConstruction(i)
+        RemoveConstruction(v.mapobjid)
     else
         AddPlayerChat(ply, "You can't remove this object")
     end
 end
 AddRemoteEvent("Removeobj", Removeobj)
 
-function RemoveConstruction(constructedIndex)
-    DestroyObject(constructions[constructedIndex].mapobjid)
-    constructions[constructedIndex] = nil
+function RemoveConstruction(constructionID)
+    DestroyObject(constructionID)
+    constructions[constructionID] = nil
 end
