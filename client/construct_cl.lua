@@ -76,8 +76,7 @@ function tickhook(DeltaSeconds)
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
-				local test, x, y, z = ScreenToWorld(ScreenX/2, ScreenY/2)
-				AddPlayerChat(test)
+				local _, x, y, z = ScreenToWorld(ScreenX/2, ScreenY/2)
 				actor:SetActorLocation(FVector(x, y, z))
 				actor:SetActorRotation(FRotator( 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3]))
 			end
