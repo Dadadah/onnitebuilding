@@ -57,6 +57,7 @@ function OnKeyPress(key)
 					AddPlayerChat("Please look at valid locations")
 				end
             else
+                SetMouseLocation(ScreenX/2, ScreenY/2)
                 local _, entityId = GetMouseHitEntity()
                 if (entityId ~= 0) then
                 	CallRemoteEvent("Removeobj", entityId)
@@ -69,6 +70,7 @@ AddEvent("OnKeyPress", OnKeyPress)
 
 function tickhook(DeltaSeconds)
     if constructionActivated then
+		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if not remove_obj then
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
