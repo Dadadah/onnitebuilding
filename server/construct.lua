@@ -64,7 +64,7 @@ AddEvent("OnPlayerQuit", OnPlayerQuit)
 
 
 function OnPlayerJoin(ply)
-    propcount[ply] = {}
+    propcount[ply] = 0
 end
 AddEvent("OnPlayerJoin", OnPlayerJoin)
 
