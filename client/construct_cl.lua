@@ -16,6 +16,7 @@ function OnKeyPress(key)
         constructionActivated = not constructionActivated
         if (constructionActivated == false) then
             CallRemoteEvent("RemoveShadow")
+			my_shadow = 0
         else
 			CallRemoteEvent("UpdateCons", curstruct)
 		end
