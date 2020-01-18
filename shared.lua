@@ -7,16 +7,19 @@ CONSTRUCTION_OBJECTS = {}
 CONSTRUCTION_OBJECTS[1] = {
     ID = 240,
     BaseRotation = {0, 0, 180},
-    Scale = {2, 2, 2}
+    Scale = {2, 2, 2},
+    Offset = {300, 0, 500}
 }
 CONSTRUCTION_OBJECTS[2] = {
     ID = 387,
     BaseRotation = {45, 0, 0},
-    Scale = {0.25, 0.25, 0.25}
+    Scale = {0.25, 0.25, 0.25},
+    Offset = {0, 0, 250}
 }
 CONSTRUCTION_OBJECTS[3] = {
     ID = 387,
     BaseRotation = {0, 0, 0},
-    Scale = {0.25, 0.25, 0.25}
+    Scale = {0.25, 0.25, 0.25},
+    Offset = {0, 0, 0}
 }
 --CONSTRUCTION_OBJECTS[index] = object id -- https://dev.playonset.com/wiki/Objects

@@ -51,7 +51,14 @@ function OnKeyPress(key)
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-	            	CallRemoteEvent("Createcons", x, y, z, 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3])
+	            	CallRemoteEvent("Createcons",
+						x + CONSTRUCTION_OBJECTS[curstruct].Offset[1], -- XPos
+						y + CONSTRUCTION_OBJECTS[curstruct].Offset[2], -- YPos
+						z + CONSTRUCTION_OBJECTS[curstruct].Offset[3], -- ZPos
+						0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
+						currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
+						0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
+					)
 					CallRemoteEvent("UpdateCons", curstruct)
 				else
 					AddPlayerChat("Please look at valid locations")
@@ -78,8 +85,16 @@ function tickhook(DeltaSeconds)
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
 				local x, y, z = GetMouseHitLocation()
-				actor:SetActorLocation(FVector(x, y, z))
-				actor:SetActorRotation(FRotator( 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3]))
+				actor:SetActorLocation(FVector(
+					x + CONSTRUCTION_OBJECTS[curstruct].Offset[1], -- XPos
+					y + CONSTRUCTION_OBJECTS[curstruct].Offset[2], -- YPos
+					z + CONSTRUCTION_OBJECTS[curstruct].Offset[3] -- ZPos
+				))
+				actor:SetActorRotation(FRotator(
+					0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
+					currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
+					0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
+				))
 			end
 		end
 	end
