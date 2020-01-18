@@ -136,7 +136,7 @@ function getConstructOffset(constructID, stackID)
 	end
 	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
 	yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff, -- YPos
-	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff + zselfoff, -- ZPos
+	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff - zselfoff, -- ZPos
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
