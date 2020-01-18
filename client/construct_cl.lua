@@ -86,14 +86,27 @@ AddEvent("OnKeyPress", OnKeyPress)
 
 function tickhook(DeltaSeconds)
     if constructionActivated then
-		local ScreenX, ScreenY = GetScreenSize()
-		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if not remove_obj then
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
+
+				local ScreenX, ScreenY = GetScreenSize()
+				SetMouseLocation(ScreenX/2, ScreenY/2)
 				local x, y, z = GetMouseHitLocation()
+				local _, entityId = GetMouseHitEntity()
+				local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+				if entConID ~= nil then
+					-- local directionToStack
+					x, y, z = GetObjectLocation(entityId)
+					local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
+					local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
+					local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
+					local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
+					xpos = xpos - xxmid - xymid
+					ypos = xpos - yxmid - yymid
+				end
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
 				actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 			end
