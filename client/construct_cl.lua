@@ -94,8 +94,8 @@ AddEvent("OnGameTick", tickhook)
 function getShadowPositionAndRotation()
 	local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
 	local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
-	local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
-	local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
+	local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
+	local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
 	return CONSTRUCTION_OBJECTS[curstruct].Offset[1] + xxmid + xymid, -- XPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[2] + yxmid + yymid, -- YPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
