@@ -12,6 +12,14 @@ local ACTIVATE_REMOVE_MODE_KEY = "E"
 local ROTATE_KEY = "R"
 
 function OnKeyPress(key)
+	if IsPlayerDead() or IsPlayerInVehicle() then
+		if constructionActivated and not remove_obj then CallRemoteEvent("RemoveShadow") end
+		constructionActivated = false
+		remove_obj = false
+		my_shadow = 0
+		return
+	end
+
 	if key == ACTIVATE_CONSTRUCTION_KEY then
         constructionActivated = not constructionActivated
         if (constructionActivated == false) then
@@ -38,22 +46,28 @@ function OnKeyPress(key)
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-					local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-					local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-					if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-						x, y, z = GetObjectLocation(entityId)
-						local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-						xpos = xpos + xsub
-						ypos = ypos + ysub
-						zpos = zpos - zsub
+					-- Distance Check
+					local xply, yply, zply = GetPlayerLocation()
+					if GetDistance3D(x, y, z, xply, yply, zply) < 610 then -- 20 feet
+						local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+						local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+						if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+							x, y, z = GetObjectLocation(entityId)
+							local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+							xpos = xpos + xsub
+							ypos = ypos + ysub
+							zpos = zpos - zsub
+						end
+						-- Uncomment to get size of a new object
+						-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
+						-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
+		            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
+						CallRemoteEvent("UpdateCons", curstruct)
+					else
+						AddPlayerChat("That's too far away")
 					end
-					-- Uncomment to get size of a new object
-					-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
-					-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
-	            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
-					CallRemoteEvent("UpdateCons", curstruct)
 				else
-					AddPlayerChat("Please look at valid locations")
+					AddPlayerChat("Invalid location")
 				end
             else
                 if (entityId ~= 0) then
@@ -87,22 +101,26 @@ function tickhook(DeltaSeconds)
     if (constructionActivated) and (not remove_obj) and (my_shadow ~= 0) and (not IsPlayerInMainMenu()) then
 		local actor = GetObjectActor(my_shadow)
 		if not actor then return end
-
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		local x, y, z = GetMouseHitLocation()
-		local _, entityId = GetMouseHitEntity()
-		local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-		local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-		if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-			x, y, z = GetObjectLocation(entityId)
-			local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-			xpos = xpos + xsub
-			ypos = ypos + ysub
-			zpos = zpos - zsub
+
+		-- Distance Check
+		local xply, yply, zply = GetPlayerLocation()
+		if GetDistance3D(x, y, z, xply, yply, zply) < 610 then -- 20 feet
+			local _, entityId = GetMouseHitEntity()
+			local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+			local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+			if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+				x, y, z = GetObjectLocation(entityId)
+				local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+				xpos = xpos + xsub
+				ypos = ypos + ysub
+				zpos = zpos - zsub
+			end
+			actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
+			actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 		end
-		actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
-		actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 	end
 end
 AddEvent("OnGameTick", tickhook)

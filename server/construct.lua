@@ -1,4 +1,4 @@
-local remove_objs_cons = true -- does the mod remove all objects created by the player who quit the game
+local prop_limit = 100
 
 local admins_remove = {}
 
@@ -6,6 +6,7 @@ local admins_remove = {}
 --admins_remove["steamid"] = true
 
 local constructions = {}
+local propcount = {}
 
 local shadows = {}
 
@@ -50,24 +51,29 @@ AddRemoteEvent("UpdateCons", upcons)
 
 function OnPlayerQuit(ply)
     rshadow(ply)
-    if (remove_objs_cons == true) then
-        local steamid = tostring(GetPlayerSteamId(ply))
+    local steamid = tostring(GetPlayerSteamId(ply))
 
-        for k, v in pairs(constructions) do
-            if v.owner == steamid then
-                RemoveConstruction(k)
-            end
+    for k, v in pairs(constructions) do
+        if v.owner == steamid then
+            RemoveConstruction(ply, k)
         end
     end
+    propcount[ply] = nil
 end
 AddEvent("OnPlayerQuit", OnPlayerQuit)
 
 function Createobj(ply, x, y, z, pitch, yaw, roll)
     if (shadows[ply]) then
+        if propcount[ply] >= prop_limit then
+            AddPlayerChat(ply, "Prop limit reached")
+            return
+        end
         local tbltoinsert = {}
         tbltoinsert.mapobjid = shadows[ply].mapobjid
         tbltoinsert.objid = shadows[ply].objid
         tbltoinsert.owner = tostring(GetPlayerSteamId(ply))
+
+        propcount[ply] = propcount[ply] + 1
 
         -- Move the object to the desired position
         SetObjectLocation(tbltoinsert.mapobjid, x, y, z)
@@ -90,14 +96,15 @@ function Removeobj(ply, hitentity)
         return
     end
     if (v.owner == steamid or admins_remove[steamid]) then
-        RemoveConstruction(v.mapobjid)
+        RemoveConstruction(ply, v.mapobjid)
     else
         AddPlayerChat(ply, "You can't remove this object")
     end
 end
 AddRemoteEvent("Removeobj", Removeobj)
 
-function RemoveConstruction(constructionID)
+function RemoveConstruction(ply, constructionID)
+    propcount[ply] = propcount[ply] - 1
     DestroyObject(constructionID)
     constructions[constructionID] = nil
 end
