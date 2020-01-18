@@ -56,8 +56,7 @@ function OnKeyPress(key)
 				if (x ~= 0) then
 					local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 					local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-					if entConID ~= nil then
-						-- local directionToStack
+					if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
 						x, y, z = GetObjectLocation(entityId)
 						local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
 						xpos = xpos + xsub
@@ -95,7 +94,7 @@ function tickhook(DeltaSeconds)
 				local _, entityId = GetMouseHitEntity()
 				local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-				if entConID ~= nil then
+				if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
 					-- local directionToStack
 					x, y, z = GetObjectLocation(entityId)
 					local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
