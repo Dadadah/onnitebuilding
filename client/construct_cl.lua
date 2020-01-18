@@ -71,6 +71,7 @@ function tickhook(DeltaSeconds)
 		if remove_obj == false then
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
+				local x, y, z = GetMouseHitLocation()
 				actor:SetActorLocation(FVector(x, y, z))
 				actor:SetActorRotation(FRotator(0, 0, currotyaw))
 			end
@@ -102,6 +103,7 @@ function GhostObject(object, prop, val)
 			my_shadow = object
 			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Movable)
 		elseif not val then
+			my_shadow = 0
 			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Static)
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
