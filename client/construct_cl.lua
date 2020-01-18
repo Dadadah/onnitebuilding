@@ -51,14 +51,10 @@ function OnKeyPress(key)
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-	            	CallRemoteEvent("Createcons",
-						x + CONSTRUCTION_OBJECTS[curstruct].Offset[1], -- XPos
-						y + CONSTRUCTION_OBJECTS[curstruct].Offset[2], -- YPos
-						z + CONSTRUCTION_OBJECTS[curstruct].Offset[3], -- ZPos
-						0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
-						currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
-						0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
-					)
+					local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
+					local xsize, ysize, zsize = GetObjectSize(my_shadow)
+					AddPlayerChat("x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
+	            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
 					CallRemoteEvent("UpdateCons", curstruct)
 				else
 					AddPlayerChat("Please look at valid locations")
@@ -85,21 +81,23 @@ function tickhook(DeltaSeconds)
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
 				local x, y, z = GetMouseHitLocation()
-				actor:SetActorLocation(FVector(
-					x + CONSTRUCTION_OBJECTS[curstruct].Offset[1], -- XPos
-					y + CONSTRUCTION_OBJECTS[curstruct].Offset[2], -- YPos
-					z + CONSTRUCTION_OBJECTS[curstruct].Offset[3] -- ZPos
-				))
-				actor:SetActorRotation(FRotator(
-					0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
-					currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
-					0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
-				))
+				local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
+				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
+				actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 			end
 		end
 	end
 end
 AddEvent("OnGameTick", tickhook)
+
+function getShadowPositionAndRotation()
+	return CONSTRUCTION_OBJECTS[curstruct].Offset[1] + CONSTRUCTION_OBJECTS[curstruct].Middle[1], -- XPos
+	CONSTRUCTION_OBJECTS[curstruct].Offset[2] + CONSTRUCTION_OBJECTS[curstruct].Middle[2], -- YPos
+	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
+	0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
+	currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
+	0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
+end
 
 function GhostNewObject(object)
 	if GetObjectPropertyValue(object, GHOSTED_PROPERTY_NAME) == true then
