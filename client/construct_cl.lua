@@ -59,15 +59,9 @@ function OnKeyPress(key)
 					if entConID ~= nil then
 						-- local directionToStack
 						x, y, z = GetObjectLocation(entityId)
-						local xsub, ysub, zsub = getConstructOffset(entConID)
-						local xglobaloff = 0
-						local yglobaloff = 0
-						if entConID == curstruct then
-							xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-							yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-						end
-						xpos = xpos + xsub - xglobaloff
-						ypos = ypos + ysub - yglobaloff
+						local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+						xpos = xpos + xsub
+						ypos = ypos + ysub
 						zpos = zpos - zsub
 					end
 					-- Uncomment to get size of a new object
@@ -104,15 +98,9 @@ function tickhook(DeltaSeconds)
 				if entConID ~= nil then
 					-- local directionToStack
 					x, y, z = GetObjectLocation(entityId)
-					local xsub, ysub, zsub = getConstructOffset(entConID)
-					local xglobaloff = 0
-					local yglobaloff = 0
-					if entConID == curstruct then
-						xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-						yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-					end
-					xpos = xpos + xsub - xglobaloff
-					ypos = ypos + ysub - yglobaloff
+					local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+					xpos = xpos + xsub
+					ypos = ypos + ysub
 					zpos = zpos - zsub
 				end
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
@@ -123,16 +111,30 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
-function getConstructOffset(constructID)
+function getConstructOffset(constructID, stackID)
 	local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.cos(math.rad(currotyaw))
 	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.sin(math.rad(currotyaw))
 	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.cos(math.rad(currotyaw))
 	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.sin(math.rad(currotyaw))
+	local xxselfoff = 0
+	local yxselfoff = 0
+	local xyselfoff = 0
+	local yyselfoff = 0
 	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
 	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-	return xxoff + xyoff + xglobaloff, -- XPos
-	yyoff + yxoff + yglobaloff, -- YPos
-	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3], -- ZPos
+	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
+	if stackID == constructID then
+		xglobaloff = -1 * xglobaloff
+		yglobaloff = -1 * xglobaloff
+		xglobaloff = 0
+		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.cos(math.rad(currotyaw))
+		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.sin(math.rad(currotyaw))
+		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.cos(math.rad(currotyaw))
+		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.sin(math.rad(currotyaw))
+	end
+	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
+	yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff, -- YPos
+	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff + CONSTRUCTION_OBJECTS[constructID].SelfOffset[3], -- ZPos
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
 	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
