@@ -62,6 +62,12 @@ function OnPlayerQuit(ply)
 end
 AddEvent("OnPlayerQuit", OnPlayerQuit)
 
+
+function OnPlayerJoin(ply)
+    propcount[ply] = {}
+end
+AddEvent("OnPlayerJoin", OnPlayerJoin)
+
 function Createobj(ply, x, y, z, pitch, yaw, roll)
     if (shadows[ply]) then
         if propcount[ply] >= prop_limit then

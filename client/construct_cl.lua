@@ -48,7 +48,7 @@ function OnKeyPress(key)
 				if (x ~= 0) then
 					-- Distance Check
 					local xply, yply, zply = GetPlayerLocation()
-					if GetDistance3D(x, y, z, xply, yply, zply) < 610 then -- 20 feet
+					if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
 						local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 						local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
 						if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
@@ -107,7 +107,7 @@ function tickhook(DeltaSeconds)
 
 		-- Distance Check
 		local xply, yply, zply = GetPlayerLocation()
-		if GetDistance3D(x, y, z, xply, yply, zply) < 610 then -- 20 feet
+		if GetDistance3D(x, y, z, xply, yply, zply) < 2000
 			local _, entityId = GetMouseHitEntity()
 			local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 			local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
