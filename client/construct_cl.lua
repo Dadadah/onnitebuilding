@@ -92,6 +92,12 @@ end
 AddEvent("OnGameTick", tickhook)
 
 function getShadowPositionAndRotation()
+	local xmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1]
+	local ymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2]
+	if currotyaw % 180 == 0 then
+		xmid = CONSTRUCTION_OBJECTS[curstruct].Middle[2]
+		ymid = CONSTRUCTION_OBJECTS[curstruct].Middle[1]
+	end
 	return CONSTRUCTION_OBJECTS[curstruct].Offset[1] + CONSTRUCTION_OBJECTS[curstruct].Middle[1], -- XPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[2] + CONSTRUCTION_OBJECTS[curstruct].Middle[2], -- YPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
