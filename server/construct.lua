@@ -1,16 +1,8 @@
 local remove_objs_cons = true -- does the mod remove all objects created by the player who quit the game
 
-local objs = {}
-
-objs[1] = 240 --Don't change this line
-objs[2] = 387 --Don't change this line
-objs[3] = 387 --Don't change this line
---objs[4] = 1003
---objs[index] = object id -- https://dev.playonset.com/wiki/Objects
-
 local admins_remove = {}
 
---admins_remove["76561197972837186"] = true -- me
+--admins_remove["76561197972837186"] = true -- vugi99
 --admins_remove["steamid"] = true
 
 local pitchstairs = 45
@@ -59,7 +51,7 @@ function constructshadow(ply, conid, angle, x, y, z, hitentity, camrot)
         size = 0.25
         z = z + 25
     end
-    local identifier = CreateObject(objs[conid], x, y, z, anglex, angle, 0, size, size, size)
+    local identifier = CreateObject(CONSTRUCTION_OBJECTS[conid], x, y, z, anglex, angle, 0, size, size, size)
     if (identifier~=false) then
         shadows[ply] = {}
         shadows[ply].objid = conid
@@ -296,7 +288,7 @@ AddEvent("OnPackageStart", function()
 end)
 
 function OnPlayerSpawn(ply)
-    CallRemoteEvent(ply, "numberof_objects", #objs)
+    CallRemoteEvent(ply, "numberof_objects", #CONSTRUCTION_OBJECTS)
 end
 AddEvent("OnPlayerSpawn", OnPlayerSpawn)
 
