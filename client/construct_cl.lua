@@ -31,22 +31,6 @@ function OnKeyPress(key)
 				GetObjectActor(my_shadow):SetActorHiddenInGame(false)
 			end
         end
-	    if key == "Mouse Wheel Up" then
-			curstruct = curstruct + 1
-	        curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
-			CallRemoteEvent("UpdateCons", curstruct)
-			my_shadow = 0
-	    end
-	    if key == "Mouse Wheel Down" then
-			curstruct = curstruct + 1
-			curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
-			CallRemoteEvent("UpdateCons", curstruct)
-			my_shadow = 0
-	    end
-	    if key == ROTATE_KEY then
-	        currotyaw = currotyaw + 90
-			currotyaw = currotyaw % 360
-	    end
 	    if key == "Left Mouse Button" then
 			local ScreenX, ScreenY = GetScreenSize()
 			SetMouseLocation(ScreenX/2, ScreenY/2)
@@ -77,35 +61,48 @@ function OnKeyPress(key)
                 end
             end
 	    end
+		if not remove_obj then
+			if key == "Mouse Wheel Up" then
+				curstruct = curstruct + 1
+				curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
+				CallRemoteEvent("UpdateCons", curstruct)
+				my_shadow = 0
+			end
+			if key == "Mouse Wheel Down" then
+				curstruct = curstruct + 1
+				curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
+				CallRemoteEvent("UpdateCons", curstruct)
+				my_shadow = 0
+			end
+			if key == ROTATE_KEY then
+				currotyaw = currotyaw + 90
+				currotyaw = currotyaw % 360
+			end
+		end
 	end
 end
 AddEvent("OnKeyPress", OnKeyPress)
 
 function tickhook(DeltaSeconds)
-    if constructionActivated then
-		if not remove_obj then
-			if my_shadow ~= 0 then
-				local actor = GetObjectActor(my_shadow)
-				if not actor then return end
+    if (constructionActivated) and (not remove_obj) and (my_shadow ~= 0) and (not IsPlayerInMainMenu()) then
+		local actor = GetObjectActor(my_shadow)
+		if not actor then return end
 
-				local ScreenX, ScreenY = GetScreenSize()
-				SetMouseLocation(ScreenX/2, ScreenY/2)
-				local x, y, z = GetMouseHitLocation()
-				local _, entityId = GetMouseHitEntity()
-				local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-				if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-					-- local directionToStack
-					x, y, z = GetObjectLocation(entityId)
-					local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-					xpos = xpos + xsub
-					ypos = ypos + ysub
-					zpos = zpos - zsub
-				end
-				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
-				actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
-			end
+		local ScreenX, ScreenY = GetScreenSize()
+		SetMouseLocation(ScreenX/2, ScreenY/2)
+		local x, y, z = GetMouseHitLocation()
+		local _, entityId = GetMouseHitEntity()
+		local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+		local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+		if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+			x, y, z = GetObjectLocation(entityId)
+			local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+			xpos = xpos + xsub
+			ypos = ypos + ysub
+			zpos = zpos - zsub
 		end
+		actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
+		actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 	end
 end
 AddEvent("OnGameTick", tickhook)
@@ -184,12 +181,13 @@ function render_cons()
 	    DrawText(5, 475, "Use the mouse wheel to change your object")
 	    DrawText(5, 500, "Use the left click to place your object")
 	    if remove_obj then
-	        local entityType, entityId = GetMouseHitEntity()
-            if (entityId ~= 0) then
+	        local _, entityId = GetMouseHitEntity()
+            if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
                 local x, y, z = GetObjectLocation(entityId)
-                local bResult, ScreenX, ScreenY = WorldToScreen(x, y, z)
+				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+                local bResult, ScreenX, ScreenY = WorldToScreen(x + xpos, y + ypos, z + zpos)
                 if bResult then
-                    DrawText(ScreenX - 40, ScreenY, "Left Click to remove")
+                    DrawText(ScreenX, ScreenY, "Left Click to remove")
                 end
             end
     	end

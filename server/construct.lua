@@ -83,19 +83,6 @@ function Createobj(ply, x, y, z, pitch, yaw, roll)
 end
 AddRemoteEvent("Createcons", Createobj)
 
-function coll_desync_workaround()
-    -- TODO: Fix this code to work with the new system
-    for kobj, vobj in ipairs(shadows) do
-        local identifier = vobj.mapobjid
-        for k, v in ipairs(GetAllPlayers()) do
-           CallRemoteEvent(v, "Createdobj", identifier, false)
-        end
-    end
-end
-AddEvent("OnPackageStart", function()
-    --CreateTimer(coll_desync_workaround, 1000)
-end)
-
 function Removeobj(ply, hitentity)
     local steamid = tostring(GetPlayerSteamId(ply))
     local v = constructions[hitentity]
