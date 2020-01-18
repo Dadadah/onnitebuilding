@@ -5,11 +5,7 @@ local admins_remove = {}
 --admins_remove["76561197972837186"] = true -- vugi99
 --admins_remove["steamid"] = true
 
-local pitchstairs = 45
-
-local constructed = {}
-
-local constructedByID = {}
+local constructions = {}
 
 local shadows = {}
 
@@ -57,14 +53,10 @@ function OnPlayerQuit(ply)
     if (remove_objs_cons == true) then
         local steamid = tostring(GetPlayerSteamId(ply))
 
-        local index = 1 -- DjCtavia#3870
-
-        while index < #constructed + 1 do
-            if (constructed[index].owner == steamid) then
-                RemoveConstruction(index)
-                index = index - 1
+        for k, v in pairs(constructions) do
+            if v.owner == steamid then
+                RemoveConstruction(k)
             end
-            index = index + 1
         end
     end
 end
@@ -84,10 +76,8 @@ function Createobj(ply, x, y, z, pitch, yaw, roll)
         -- Disable ghosting on this object
         SetObjectPropertyValue(tbltoinsert.mapobjid, GHOSTED_PROPERTY_NAME, false, true)
 
-        -- Insert the index of the new object into the ByID table
-        constructedByID[tbltoinsert.mapobjid] = #constructed + 1
+        constructions[tbltoinsert.mapobjid] = tbltoinsert
 
-        table.insert(constructed, tbltoinsert)
         table.remove(shadows, ply)
     end
 end
@@ -108,11 +98,7 @@ end)
 
 function Removeobj(ply, hitentity)
     local steamid = tostring(GetPlayerSteamId(ply))
-    i = constructedByID[hitentity]
-    if i == nil then
-        return
-    end
-    local v = constructed[i]
+    local v = constructions[hitentity]
     if v == nil then
         return
     end
@@ -125,10 +111,6 @@ end
 AddRemoteEvent("Removeobj", Removeobj)
 
 function RemoveConstruction(constructedIndex)
-    DestroyObject(constructed[constructedIndex].mapobjid)
-
-    -- We can't use table.remove on this table because this array is sparse, it won't always start at 1 and it won't always be consecutive.
-    constructedByID[constructed[constructedIndex].mapobjid] = nil
-
-    table.remove(constructed, constructedIndex)
+    DestroyObject(constructions[constructedIndex].mapobjid)
+    constructions[constructedIndex] = nil
 end
