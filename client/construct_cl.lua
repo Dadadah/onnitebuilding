@@ -111,17 +111,17 @@ function tickhook(DeltaSeconds)
 end
 AddEvent("OnGameTick", tickhook)
 
-function getConstructOffset()
-	local xxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.cos(math.rad(currotyaw))
-	local yxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.sin(math.rad(currotyaw))
-	local xyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.cos(math.rad(currotyaw))
-	local yyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.sin(math.rad(currotyaw))
+function getConstructOffset(constructID)
+	local xxoff = CONSTRUCTION_OBJECTS[constructID].Offset[1] * math.cos(math.rad(currotyaw))
+	local yxoff = CONSTRUCTION_OBJECTS[constructID].Offset[1] * math.sin(math.rad(currotyaw))
+	local xyoff = CONSTRUCTION_OBJECTS[constructID].Offset[2] * math.cos(math.rad(currotyaw))
+	local yyoff = CONSTRUCTION_OBJECTS[constructID].Offset[2] * math.sin(math.rad(currotyaw))
 	return xxoff + xyoff, -- XPos
 	yyoff + yxoff, -- YPos
-	CONSTRUCTION_OBJECTS[curstruct].Offset[3], -- ZPos
-	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
-	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
-	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
+	CONSTRUCTION_OBJECTS[constructID].Offset[3], -- ZPos
+	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
+	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
+	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
 end
 
 function GhostNewObject(object)
