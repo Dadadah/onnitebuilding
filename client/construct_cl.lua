@@ -24,8 +24,10 @@ function OnKeyPress(key)
     	if key == ACTIVATE_REMOVE_MODE_KEY then
             remove_obj = not remove_obj
             if remove_obj then
-        		CallRemoteEvent("RemoveShadow")
-            end
+				GetObjectActor(my_shadow):SetActorHiddenInGame(true)
+            else
+				GetObjectActor(my_shadow):SetActorHiddenInGame(false)
+			end
         end
 	    if key == "Mouse Wheel Up" then
 			curstruct = curstruct + 1
