@@ -107,7 +107,7 @@ function tickhook(DeltaSeconds)
 
 		-- Distance Check
 		local xply, yply, zply = GetPlayerLocation()
-		if GetDistance3D(x, y, z, xply, yply, zply) < 2000
+		if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
 			local _, entityId = GetMouseHitEntity()
 			local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
 			local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
