@@ -2,9 +2,11 @@
 	"author": "Voltaism",
 	"version": "1.1",
         "client_scripts": [
-                "client/construct_cl.lua"
+                "client/construct_cl.lua",
+				"shared.lua"
         ],
         "server_scripts": [
-                "server/construct.lua"
+                "server/construct.lua",
+				"shared.lua"
         ]
 }

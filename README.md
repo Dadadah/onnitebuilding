@@ -9,5 +9,8 @@
 
 #### Informations
 * This mod can have conflicts with others packages and bugs
-* you can add objects in construct.lua ( line 8 ) 
-* you can change remove_objs_cons (does the mod remove all objects created by the player who quit the game) at the start of the construct.lua 
+* you can add objects in construct.lua ( line 8 )
+* you can change remove_objs_cons (does the mod remove all objects created by the player who quit the game) at the start of the construct.lua
+
+## License
+This code is licensed by [GNU GPL-V3](https://github.com/Dadadah/onset-construction/blob/master/LICENSE)
