@@ -14,7 +14,7 @@ CONSTRUCTION_OBJECTS[2] = {
     BaseRotation = {45, 0, 0},
     Scale = {0.25, 0.25, 0.25}
 }
-CONSTRUCTION_OBJECTS[2] = {
+CONSTRUCTION_OBJECTS[3] = {
     ID = 387,
     BaseRotation = {0, 0, 0},
     Scale = {0.25, 0.25, 0.25}
