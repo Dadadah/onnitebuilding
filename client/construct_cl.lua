@@ -118,8 +118,11 @@ function tickhook(DeltaSeconds)
 				ypos = ypos + ysub
 				zpos = zpos - zsub
 			end
+			actor:SetActorHiddenInGame(false)
 			actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
 			actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
+		else
+			actor:SetActorHiddenInGame(true)
 		end
 	end
 end
