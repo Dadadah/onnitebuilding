@@ -83,8 +83,8 @@ function OnKeyPress(key)
 				my_shadow = 0
 			end
 			if key == "Mouse Wheel Down" then
-				curstruct = curstruct + 1
-				curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
+				curstruct = curstruct - 1
+				curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
 				CallRemoteEvent("UpdateCons", curstruct)
 				my_shadow = 0
 			end
