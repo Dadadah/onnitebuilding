@@ -59,14 +59,8 @@ function OnKeyPress(key)
 					if entConID ~= nil then
 						-- local directionToStack
 						local xsub, ysub, zsub = getConstructOffset(entConID)
-						local xglobaloff = 0
-						local yglobaloff = 0
-						if entConID == curstruct then
-							xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-							yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-						end
-						xpos = xpos + xsub - xglobaloff
-						ypos = ypos + ysub - yglobaloff
+						xpos = xpos + xsub
+						ypos = ypos + ysub
 						zpos = zpos - zsub
 					end
 					-- Uncomment to get size of a new object
@@ -104,14 +98,8 @@ function tickhook(DeltaSeconds)
 					-- local directionToStack
 					x, y, z = GetObjectLocation(entityId)
 					local xsub, ysub, zsub = getConstructOffset(entConID)
-					local xglobaloff = 0
-					local yglobaloff = 0
-					if entConID == curstruct then
-						xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-						yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-					end
-					xpos = xpos + xsub - xglobaloff
-					ypos = ypos + ysub - yglobaloff
+					xpos = xpos + xsub
+					ypos = ypos + ysub
 					zpos = zpos - zsub
 				end
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
