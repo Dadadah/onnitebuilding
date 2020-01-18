@@ -1,89 +1,74 @@
 
-local consactivated = false
+local constructionActivated = false
 local curstruct = 1
 local currotyaw = 0
 local remove_obj = false
 
-local numb_of_objs = 0
-
 -- Constants
 local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
 local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
+local ACTIVATE_CONSTRUCTION_KEY = "Y"
+local ACTIVATE_REMOVE_MODE_KEY = "E"
+local ROTATE_KEY = "R"
 
 function OnKeyPress(key)
-	if key == "Y" then
-        consactivated = not consactivated
-        if (consactivated == false) then
+	if key == ACTIVATE_CONSTRUCTION_KEY then
+        constructionActivated = not constructionActivated
+        if (constructionActivated == false) then
             CallRemoteEvent("RemoveShadow")
         end
     end
-    if key == "E" then
-        if (consactivated == true) then
+    if (constructionActivated == true) then
+    	if key == ACTIVATE_REMOVE_MODE_KEY then
             remove_obj = not remove_obj
             if remove_obj then
         		CallRemoteEvent("RemoveShadow")
             end
         end
-    end
-    if key == "Mouse Wheel Up" then
-		curstruct = curstruct + 1
-        curstruct = ((curstruct - 1) % numb_of_objs) + 1
-    end
-    if key == "Mouse Wheel Down" then
-		curstruct = curstruct + 1
-		curstruct = (curstruct % numb_of_objs) + 1
-    end
-    if key == "R" then
-        if (currotyaw + 90 > 180) then
-            currotyaw = -90
-        else
-            currotyaw = currotyaw + 90
-        end
-    end
-    if key == "Left Mouse Button" then
-        if consactivated then
-            if (remove_obj==false) then
+	    if key == "Mouse Wheel Up" then
+			curstruct = curstruct + 1
+	        curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
+	    end
+	    if key == "Mouse Wheel Down" then
+			curstruct = curstruct + 1
+			curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
+	    end
+	    if key == ROTATE_KEY then
+	        if (currotyaw + 90 > 180) then
+	            currotyaw = -90
+	        else
+	            currotyaw = currotyaw + 90
+	        end
+	    end
+	    if key == "Left Mouse Button" then
+            if (remove_obj == false) then
             	CallRemoteEvent("Createcons")
             else
                 local ScreenX, ScreenY = GetScreenSize()
                 SetMouseLocation(ScreenX/2, ScreenY/2)
                 local entityType, entityId = GetMouseHitEntity()
-                if (entityId~=0) then
-                	CallRemoteEvent("Removeobj",entityId)
+                if (entityId ~= 0) then
+                	CallRemoteEvent("Removeobj", entityId)
                 end
             end
-        end
-    end
+	    end
+	end
 end
 AddEvent("OnKeyPress", OnKeyPress)
 
-local lasthitposx = nil
-local lasthitposy = nil
-local lasthitposz = nil
-local lastang = nil
-
-local lastcons = nil
-
 function tickhook(DeltaSeconds)
-    if consactivated then
+    if constructionActivated then
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		if remove_obj == false then
-		local x,y,z = GetMouseHitLocation()
-			if (x ~= lasthitposx or y ~= lasthitposy or z ~= lasthitposz or lastang ~= currotyaw or lastcons ~= curstruct) then
-				lasthitposx = x
-				lasthitposy = y
-				lasthitposz = z
-				lastang = currotyaw
-				lastcons = curstruct
-				if (x ~= 0) then
-					local entityType, entityId = GetMouseHitEntity()
-					local pitch,yaw,roll = GetCameraRotation()
-			    	CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
-				else
-					AddPlayerChat("Please look at valid locations")
-				end
-		    end
+		local x, y, z = GetMouseHitLocation()
+			if (x ~= 0) then
+				local entityType, entityId = GetMouseHitEntity()
+				local _, yaw, _ = GetCameraRotation()
+		    	CallRemoteEvent("UpdateCons", curstruct, currotyaw, x, y, z, entityId, yaw)
+			else
+				AddPlayerChat("Please look at valid locations")
+			end
 		end
 	end
 end
@@ -113,12 +98,8 @@ function GhostObject(object, prop, val)
 end
 AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
-AddRemoteEvent("numberof_objects", function(number)
-    numb_of_objs = number
-end)
-
 function render_cons()
-    if consactivated then
+    if constructionActivated then
 	    DrawText(5, 400, "Press Y to toggle construction")
 	    DrawText(5, 425, "Press E to toggle remove constructions")
 	    DrawText(5, 450, "Press R to rotate your construction")
