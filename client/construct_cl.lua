@@ -57,6 +57,7 @@ function OnKeyPress(key)
 					AddPlayerChat("Please look at valid locations")
 				end
             else
+                local ScreenX, ScreenY = GetScreenSize()
                 SetMouseLocation(ScreenX/2, ScreenY/2)
                 local _, entityId = GetMouseHitEntity()
                 if (entityId ~= 0) then
@@ -70,12 +71,13 @@ AddEvent("OnKeyPress", OnKeyPress)
 
 function tickhook(DeltaSeconds)
     if constructionActivated then
-		SetMouseLocation(ScreenX/2, ScreenY/2)
+		local ScreenX, ScreenY = GetScreenSize()
 		if not remove_obj then
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
 				if not actor then return end
-				local x, y, z = GetMouseHitLocation()
+				local test, x, y, z = ScreenToWorld(ScreenX/2, ScreenY/2)
+				AddPlayerChat(test)
 				actor:SetActorLocation(FVector(x, y, z))
 				actor:SetActorRotation(FRotator( 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3]))
 			end
