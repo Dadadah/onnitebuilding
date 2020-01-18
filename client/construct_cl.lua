@@ -6,6 +6,8 @@ local remove_obj = false
 
 local my_shadow = 0
 
+local constructionOffsetCache = {}
+
 -- Constants
 local ACTIVATE_CONSTRUCTION_KEY = "Y"
 local ACTIVATE_REMOVE_MODE_KEY = "E"
@@ -129,36 +131,49 @@ end
 AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset(constructID, stackID)
-	local yawcos = math.cos(math.rad(currotyaw))
-	local yawsin = math.sin(math.rad(currotyaw))
-	local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawcos
-	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawsin
-	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawcos
-	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawsin
-	local xxselfoff = 0
-	local yxselfoff = 0
-	local xyselfoff = 0
-	local yyselfoff = 0
-	local zselfoff = 0
-	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
-	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
-	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
+	local indexName = constructID .. "stack" .. currotyaw
 	if stackID == constructID then
-		xglobaloff = -1 * xglobaloff
-		yglobaloff = -1 * yglobaloff
-		zglobaloff = 0
-		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
-		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawsin
-		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawcos
-		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawsin
-		zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
+		indexName = constructID .. "selfstack" .. currotyaw
 	end
-	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
-	yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff, -- YPos
-	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff - zselfoff, -- ZPos
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
+	if constructionOffsetCache[indexName] ~= nil then
+		local yawcos = math.cos(math.rad(currotyaw))
+		local yawsin = math.sin(math.rad(currotyaw))
+		local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawcos
+		local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawsin
+		local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawcos
+		local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawsin
+		local xxselfoff = 0
+		local yxselfoff = 0
+		local xyselfoff = 0
+		local yyselfoff = 0
+		local zselfoff = 0
+		local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
+		local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
+		local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
+		if stackID == constructID then
+			xglobaloff = -1 * xglobaloff
+			yglobaloff = -1 * yglobaloff
+			zglobaloff = 0
+			xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
+			yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawsin
+			xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawcos
+			yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawsin
+			zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
+		end
+		constructionOffsetCache[indexName] = {}
+		constructionOffsetCache[indexName].xpos = xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff
+		constructionOffsetCache[indexName].ypos = yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff
+		constructionOffsetCache[indexName].zpos = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff - zselfoff
+		constructionOffsetCache[indexName].pitch = CONSTRUCTION_OBJECTS[constructID].BaseRotation[1]
+		constructionOffsetCache[indexName].yaw = CONSTRUCTION_OBJECTS[constructID].BaseRotation[2]
+		constructionOffsetCache[indexName].roll = CONSTRUCTION_OBJECTS[constructID].BaseRotation[3]
+	end
+	return constructionOffsetCache[indexName].xpos, -- XPos
+	constructionOffsetCache[indexName].ypos, -- YPos
+	constructionOffsetCache[indexName].zpos, -- ZPos
+	constructionOffsetCache[indexName].pitch, -- Pitch
+	constructionOffsetCache[indexName].yaw, -- Yaw
+	constructionOffsetCache[indexName].roll -- Roll
 end
 
 function GhostNewObject(object)
