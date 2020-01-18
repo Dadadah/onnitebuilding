@@ -120,6 +120,8 @@ AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
 function render_cons()
     if constructionActivated then
+		SetDrawColor("#000000")
+		SetDrawScale(1, 1)
 	    DrawText(5, 400, "Press Y to toggle construction")
 	    DrawText(5, 425, "Press E to toggle remove constructions")
 	    DrawText(5, 450, "Press R to rotate your construction")
