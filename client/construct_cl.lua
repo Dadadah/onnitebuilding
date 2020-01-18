@@ -59,12 +59,10 @@ function OnKeyPress(key)
 					if entConID ~= nil then
 						-- local directionToStack
 						x, y, z = GetObjectLocation(entityId)
-						local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
-						local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
-						local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
-						local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
-						xpos = xpos - xxmid - xymid
-						ypos = xpos - yxmid - yymid
+						local xsub, ysub, zsub = getConstructOffset(entConID)
+						xpos = xpos - xsub
+						ypos = ypos - ysub
+						zpos = zpos - zsub
 					end
 					-- Uncomment to get size of a new object
 					-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
@@ -100,12 +98,10 @@ function tickhook(DeltaSeconds)
 				if entConID ~= nil then
 					-- local directionToStack
 					x, y, z = GetObjectLocation(entityId)
-					local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
-					local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
-					local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
-					local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
-					xpos = xpos - xxmid - xymid
-					ypos = xpos - yxmid - yymid
+					local xsub, ysub, zsub = getConstructOffset(entConID)
+					xpos = xpos - xsub
+					ypos = ypos - ysub
+					zpos = zpos - zsub
 				end
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
 				actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
