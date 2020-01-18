@@ -19,7 +19,6 @@ function OnKeyPress(key)
 			my_shadow = 0
         else
 			CallRemoteEvent("UpdateCons", curstruct)
-			my_shadow = 0
 		end
     end
     if (constructionActivated == true) then
@@ -53,7 +52,6 @@ function OnKeyPress(key)
 				if (x ~= 0) then
 	            	CallRemoteEvent("Createcons", x, y, z, 0, currotyaw, 0)
 					CallRemoteEvent("UpdateCons", curstruct)
-					my_shadow = 0
 				else
 					AddPlayerChat("Please look at valid locations")
 				end
@@ -77,6 +75,7 @@ function tickhook(DeltaSeconds)
 		if not remove_obj then
 			if my_shadow ~= 0 then
 				local actor = GetObjectActor(my_shadow)
+				if not actor then return end
 				local x, y, z = GetMouseHitLocation()
 				actor:SetActorLocation(FVector(x, y, z))
 				actor:SetActorRotation(FRotator(0, currotyaw, 0))
