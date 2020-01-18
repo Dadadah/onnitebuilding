@@ -135,7 +135,7 @@ function getConstructOffset(constructID, stackID)
 	if stackID == constructID then
 		indexName = constructID .. "selfstack" .. currotyaw
 	end
-	if constructionOffsetCache[indexName] ~= nil then
+	if constructionOffsetCache[indexName] == nil then
 		local yawcos = math.cos(math.rad(currotyaw))
 		local yawsin = math.sin(math.rad(currotyaw))
 		local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawcos
