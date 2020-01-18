@@ -7,8 +7,6 @@ local remove_obj = false
 local my_shadow = 0
 
 -- Constants
-local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
-local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
 local ACTIVATE_CONSTRUCTION_KEY = "Y"
 local ACTIVATE_REMOVE_MODE_KEY = "E"
 local ROTATE_KEY = "R"

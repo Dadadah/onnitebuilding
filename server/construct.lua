@@ -13,10 +13,6 @@ local constructedByID = {}
 
 local shadows = {}
 
--- Constants
-local GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
-local OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
-
 function rshadow(ply)
     if (shadows[ply]) then
         DestroyObject(shadows[ply].mapobjid)

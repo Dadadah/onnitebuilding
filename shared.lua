@@ -1,3 +1,7 @@
+-- Constants
+GHOSTED_PROPERTY_NAME = GetPackageName() .. "::ghosted"
+OWNER_PROPERTY_NAME = GetPackageName() .. "::owner"
+
 CONSTRUCTION_OBJECTS = {}
 
 CONSTRUCTION_OBJECTS[1] = 240 --Don't change this line
