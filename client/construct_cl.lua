@@ -104,8 +104,8 @@ function GhostObject(object, prop, val)
 			my_shadow = object
 			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Movable)
 		elseif not val then
-			my_shadow = 0
 			GetObjectStaticMeshComponent(my_shadow):SetMobility(EComponentMobility.Static)
+			my_shadow = 0
 		end
 		GetObjectActor(object):SetActorEnableCollision(not val)
 	    SetObjectCastShadow(object, not val)
