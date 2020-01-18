@@ -35,10 +35,11 @@ function OnKeyPress(key)
     if (constructionActivated == true) then
     	if key == ACTIVATE_REMOVE_MODE_KEY then
             remove_obj = not remove_obj
-            if remove_obj then
-				GetObjectActor(my_shadow):SetActorHiddenInGame(true)
+			local actor = GetObjectActor(my_shadow)
+            if remove_obj and actor ~= false then
+				actor:SetActorHiddenInGame(true)
             else
-				GetObjectActor(my_shadow):SetActorHiddenInGame(false)
+				actor:SetActorHiddenInGame(false)
 			end
         end
 	    if key == "Left Mouse Button" then

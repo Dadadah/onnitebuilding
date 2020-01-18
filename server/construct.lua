@@ -13,7 +13,7 @@ local shadows = {}
 function rshadow(ply)
     if (shadows[ply]) then
         DestroyObject(shadows[ply].mapobjid)
-        table.remove(shadows, ply)
+        shadows[ply] = nil
     end
  end
  AddRemoteEvent("RemoveShadow",rshadow)
@@ -40,7 +40,7 @@ function upcons(ply, conid)
     if (shadows[ply]) then
         if (shadows[ply].objid ~= conid) then
             DestroyObject(shadows[ply].mapobjid)
-            table.remove(shadows, ply)
+            shadows[ply] = nil
             constructshadow(ply, conid)
         end
     else
@@ -90,7 +90,7 @@ function Createobj(ply, x, y, z, pitch, yaw, roll)
 
         constructions[tbltoinsert.mapobjid] = tbltoinsert
 
-        table.remove(shadows, ply)
+        shadows[ply] = nil
     end
 end
 AddRemoteEvent("Createcons", Createobj)
