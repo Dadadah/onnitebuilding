@@ -22,7 +22,8 @@ function rshadow(ply)
  AddRemoteEvent("RemoveShadow",rshadow)
 
 function constructshadow(ply, conid)
-    local identifier = CreateObject(CONSTRUCTION_OBJECTS[conid], 0, 0, 0, 0, 0, 0, 1, 1, 1)
+    local x, y, z = GetPlayerLocation(ply)
+    local identifier = CreateObject(CONSTRUCTION_OBJECTS[conid], x, y, z, 0, 0, 0, 1, 1, 1)
     if (identifier ~= false) then
         shadows[ply] = {}
         shadows[ply].objid = conid
