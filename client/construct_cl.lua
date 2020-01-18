@@ -62,8 +62,8 @@ function OnKeyPress(key)
 						local xglobaloff = 0
 						local yglobaloff = 0
 						if entConID == curstruct then
-							xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-							yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
+							xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
+							yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
 						end
 						xpos = xpos + xsub - xglobaloff
 						ypos = ypos + ysub - yglobaloff
@@ -107,8 +107,8 @@ function tickhook(DeltaSeconds)
 					local xglobaloff = 0
 					local yglobaloff = 0
 					if entConID == curstruct then
-						xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-						yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
+						xglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[1] * math.sin(math.rad(currotyaw))
+						yglobaloff = CONSTRUCTION_OBJECTS[curstruct].GlobalOffset[2] * math.cos(math.rad(currotyaw))
 					end
 					xpos = xpos + xsub - xglobaloff
 					ypos = ypos + ysub - yglobaloff
