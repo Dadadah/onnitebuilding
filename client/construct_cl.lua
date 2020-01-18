@@ -19,6 +19,7 @@ function OnKeyPress(key)
 			my_shadow = 0
         else
 			CallRemoteEvent("UpdateCons", curstruct)
+			my_shadow = 0
 		end
     end
     if (constructionActivated == true) then
@@ -34,11 +35,13 @@ function OnKeyPress(key)
 			curstruct = curstruct + 1
 	        curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
 			CallRemoteEvent("UpdateCons", curstruct)
+			my_shadow = 0
 	    end
 	    if key == "Mouse Wheel Down" then
 			curstruct = curstruct + 1
 			curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
 			CallRemoteEvent("UpdateCons", curstruct)
+			my_shadow = 0
 	    end
 	    if key == ROTATE_KEY then
 	        currotyaw = currotyaw + 90
@@ -50,6 +53,7 @@ function OnKeyPress(key)
 				if (x ~= 0) then
 	            	CallRemoteEvent("Createcons", x, y, z, 0, currotyaw, 0)
 					CallRemoteEvent("UpdateCons", curstruct)
+					my_shadow = 0
 				else
 					AddPlayerChat("Please look at valid locations")
 				end
