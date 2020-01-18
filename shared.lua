@@ -41,7 +41,7 @@ CONSTRUCTION_OBJECTS[5] = {
     ID = 852,
     BaseRotation = {0, 0, 0},
     Scale = {0.75, 1, 0.8},
-    RelativeOffset = {300, 0, 0},
+    RelativeOffset = {-300, 0, 0},
     SelfOffset = {0, 0, 0},
     GlobalOffset = {300, -300, 0}
 }
