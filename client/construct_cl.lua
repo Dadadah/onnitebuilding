@@ -118,7 +118,7 @@ function getConstructOffset()
 	local yyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.sin(math.rad(currotyaw))
 	return xxoff + xyoff, -- XPos
 	yyoff + yxoff, -- YPos
-	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
+	CONSTRUCTION_OBJECTS[curstruct].Offset[3], -- ZPos
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3] -- Roll
