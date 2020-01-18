@@ -116,8 +116,8 @@ function getConstructOffset(constructID)
 	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.sin(math.rad(currotyaw))
 	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.cos(math.rad(currotyaw))
 	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.sin(math.rad(currotyaw))
-	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.cos(math.rad(currotyaw))
-	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.sin(math.rad(currotyaw))
+	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
+	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
 	return xxoff + xyoff + xglobaloff, -- XPos
 	yyoff + yxoff + yglobaloff, -- YPos
 	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3], -- ZPos

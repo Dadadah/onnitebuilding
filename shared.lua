@@ -10,7 +10,7 @@ CONSTRUCTION_OBJECTS[1] = {
     BaseRotation = {0, 0, 180},
     Scale = {2, 2, 2},
     RelativeOffset = {-300, 0, 400},
-    GlobalOffset = {0, 300, 0}
+    GlobalOffset = {300, 300, 0}
 }
 CONSTRUCTION_OBJECTS[2] = {
     ID = 387,
