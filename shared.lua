@@ -8,8 +8,8 @@ CONSTRUCTION_OBJECTS[1] = {
     ID = 240,
     BaseRotation = {0, 0, 180},
     Scale = {2, 2, 2},
-    Offset = {0, 0, 0},
-    Middle = {300, 0, 200}
+    Offset = {0, 0, 200},
+    Middle = {-300, 0, 200}
 }
 CONSTRUCTION_OBJECTS[2] = {
     ID = 387,
