@@ -184,10 +184,9 @@ function render_cons()
 	        local _, entityId = GetMouseHitEntity()
             if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
                 local x, y, z = GetObjectLocation(entityId)
-				local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-                local bResult, ScreenX, ScreenY = WorldToScreen(x - xpos, y - ypos, z - zpos)
+                local bResult, ScreenX, ScreenY = WorldToScreen(x, y, z)
                 if bResult then
-                    DrawText(ScreenX, ScreenY, "Left Click to remove")
+                    DrawText(ScreenX - 40, ScreenY, "Left Click to remove")
                 end
             end
     	end
