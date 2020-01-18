@@ -53,7 +53,8 @@ function OnKeyPress(key)
 				if (x ~= 0) then
 					local xpos, ypos, zpos, pitch, yaw, roll = getShadowPositionAndRotation()
 					local xsize, ysize, zsize = GetObjectSize(my_shadow)
-					AddPlayerChat("x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
+					AddPlayerChat("pos x: " .. xpos .. " y: " .. ypos .. " z: " .. zpos)
+					AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
 	            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
 					CallRemoteEvent("UpdateCons", curstruct)
 				else
