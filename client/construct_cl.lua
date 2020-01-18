@@ -112,16 +112,12 @@ end
 AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset()
-	local xxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.cos(math.rad(currotyaw))
-	local yxmid = CONSTRUCTION_OBJECTS[curstruct].Middle[1] * math.sin(math.rad(currotyaw))
-	local xymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.cos(math.rad(currotyaw))
-	local yymid = CONSTRUCTION_OBJECTS[curstruct].Middle[2] * math.sin(math.rad(currotyaw))
 	local xxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.cos(math.rad(currotyaw))
 	local yxoff = CONSTRUCTION_OBJECTS[curstruct].Offset[1] * math.sin(math.rad(currotyaw))
 	local xyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.cos(math.rad(currotyaw))
 	local yyoff = CONSTRUCTION_OBJECTS[curstruct].Offset[2] * math.sin(math.rad(currotyaw))
-	return xxoff + xyoff + xxmid + xymid, -- XPos
-	yyoff + yxoff + yxmid + yymid, -- YPos
+	return xxoff + xyoff, -- XPos
+	yyoff + yxoff -- YPos
 	CONSTRUCTION_OBJECTS[curstruct].Offset[3] + CONSTRUCTION_OBJECTS[curstruct].Middle[3], -- ZPos
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], -- Pitch
 	CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], -- Yaw
