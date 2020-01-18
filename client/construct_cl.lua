@@ -60,8 +60,8 @@ function OnKeyPress(key)
 						-- local directionToStack
 						x, y, z = GetObjectLocation(entityId)
 						local xsub, ysub, zsub = getConstructOffset(entConID)
-						xpos = xpos - xsub
-						ypos = ypos - ysub
+						xpos = xpos + xsub
+						ypos = ypos + ysub
 						zpos = zpos - zsub
 					end
 					-- Uncomment to get size of a new object
@@ -99,8 +99,8 @@ function tickhook(DeltaSeconds)
 					-- local directionToStack
 					x, y, z = GetObjectLocation(entityId)
 					local xsub, ysub, zsub = getConstructOffset(entConID)
-					xpos = xpos - xsub
-					ypos = ypos - ysub
+					xpos = xpos + xsub
+					ypos = ypos + ysub
 					zpos = zpos - zsub
 				end
 				actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
