@@ -23,7 +23,7 @@ function rshadow(ply)
 
 function constructshadow(ply, conid)
     local x, y, z = GetPlayerLocation(ply)
-    local identifier = CreateObject(CONSTRUCTION_OBJECTS[conid], x, y, z, 0, 0, 0, 1, 1, 1)
+    local identifier = CreateObject(CONSTRUCTION_OBJECTS[conid].ID, x, y, z, 0, 0, 0, CONSTRUCTION_OBJECTS[conid].Scale[1], CONSTRUCTION_OBJECTS[conid].Scale[2], CONSTRUCTION_OBJECTS[conid].Scale[3])
     if (identifier ~= false) then
         shadows[ply] = {}
         shadows[ply].objid = conid

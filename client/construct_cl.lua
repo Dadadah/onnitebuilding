@@ -51,7 +51,7 @@ function OnKeyPress(key)
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-	            	CallRemoteEvent("Createcons", x, y, z, 0, currotyaw, 0)
+	            	CallRemoteEvent("Createcons", x, y, z, 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[1], currotyaw + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[2], 0 + CONSTRUCTION_OBJECTS[curstruct].BaseRotation[3])
 					CallRemoteEvent("UpdateCons", curstruct)
 				else
 					AddPlayerChat("Please look at valid locations")
