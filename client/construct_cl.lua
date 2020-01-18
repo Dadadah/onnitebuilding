@@ -108,26 +108,28 @@ end
 AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset(constructID, stackID)
-	local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.cos(math.rad(currotyaw))
-	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.sin(math.rad(currotyaw))
-	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.cos(math.rad(currotyaw))
-	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.sin(math.rad(currotyaw))
+	local yawcos = math.cos(math.rad(currotyaw))
+	local yawsin = math.sin(math.rad(currotyaw))
+	local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawcos
+	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawsin
+	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawcos
+	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawsin
 	local xxselfoff = 0
 	local yxselfoff = 0
 	local xyselfoff = 0
 	local yyselfoff = 0
 	local zselfoff = 0
-	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
+	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
+	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
 	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
 	if stackID == constructID then
 		xglobaloff = -1 * xglobaloff
 		yglobaloff = -1 * yglobaloff
 		zglobaloff = 0
-		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.cos(math.rad(currotyaw))
-		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.sin(math.rad(currotyaw))
-		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.cos(math.rad(currotyaw))
-		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.sin(math.rad(currotyaw))
+		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
+		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawsin
+		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawcos
+		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawsin
 		zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
 	end
 	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
