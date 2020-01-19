@@ -218,10 +218,10 @@ function render_cons()
 	SetTextDrawScale(1.25, 1.25)
 	DrawText(5, 400, "Y - Toggle Construction")
     if constructionActivated then
-	    DrawText(5, 425, "E           - Removal Mode")
-	    DrawText(5, 450, "R           - Rotate 90 Degrees")
+	    DrawText(5, 425, "E - Removal Mode")
+	    DrawText(5, 450, "R - Rotate 90 Degrees")
 	    DrawText(5, 475, "Mouse Wheel - Switch Construction")
-	    DrawText(5, 500, "Click       - Place Construction")
+	    DrawText(5, 500, "Click - Place Construction")
 	    if remove_obj then
 	        local _, entityId = GetMouseHitEntity()
             if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
