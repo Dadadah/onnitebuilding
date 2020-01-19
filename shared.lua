@@ -14,7 +14,7 @@ CONSTRUCTION_OBJECTS[1] = {
         {0, 0, 0},
         {-600, -600, 0}
     },
-    SwapLayout = true
+    SwapLayout = true,
     GlobalOffset = {300, -300, 0}
 }
 CONSTRUCTION_OBJECTS[2] = {
@@ -34,7 +34,7 @@ CONSTRUCTION_OBJECTS[3] = {
         {300, 300, -10},
         {0, 0, 400}
     },
-    SwapLayout = true
+    SwapLayout = true,
     GlobalOffset = {0, 0, 10}
 }
 CONSTRUCTION_OBJECTS[4] = {
@@ -46,7 +46,7 @@ CONSTRUCTION_OBJECTS[4] = {
         {0, 0, 0},
         {-600, -600, 0}
     },
-    SwapLayout = true
+    SwapLayout = true,
     GlobalOffset = {300, -300, 0}
 }
 CONSTRUCTION_OBJECTS[5] = {
@@ -58,7 +58,7 @@ CONSTRUCTION_OBJECTS[5] = {
         {0, 0, 0},
         {-600, -600, 0}
     },
-    SwapLayout = true
+    SwapLayout = true,
     GlobalOffset = {300, -300, 0}
 }
 --CONSTRUCTION_OBJECTS[index] = object id -- https://dev.playonset.com/wiki/Objects
