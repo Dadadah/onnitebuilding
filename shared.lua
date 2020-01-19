@@ -10,9 +10,10 @@ CONSTRUCTION_OBJECTS[1] = {
     BaseRotation = {0, 0, 0},
     Scale = {0.3, 0.3, 0.3},
     RelativeOffset = {0, 0, 0},
-    SelfOffset = {300, 300, -20},
+    SelfOffset = {300, 300, -10},
     GlobalOffset = {0, 0, 10},
     IgnoreGlobalOffset = {
+        [1] = true,
         [2] = true
     }
 }
@@ -21,10 +22,11 @@ CONSTRUCTION_OBJECTS[2] = {
     BaseRotation = {0, 0, 0},
     Scale = {0.3, 0.3, 0.3},
     RelativeOffset = {0, 0, 0},
-    SelfOffset = {0, 0, -380},
+    SelfOffset = {0, 0, 0},
     GlobalOffset = {0, 0, 380},
     IgnoreGlobalOffset = {
-        [1] = true
+        [1] = true,
+        [2] = true
     }
 }
 CONSTRUCTION_OBJECTS[3] = {
