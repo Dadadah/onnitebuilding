@@ -78,7 +78,6 @@ function OnPlayerQuit(ply)
 end
 AddEvent("OnPlayerQuit", OnPlayerQuit)
 
-
 function OnPlayerJoin(ply)
     propcount[ply] = 0
 end

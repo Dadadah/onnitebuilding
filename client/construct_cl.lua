@@ -37,7 +37,6 @@ function OnKeyPress(key)
 		my_shadow = 0
 		return
 	end
-
 	if key == ACTIVATE_CONSTRUCTION_KEY then
         constructionActivated = not constructionActivated
         if (constructionActivated == false) then
