@@ -3,6 +3,7 @@ local constructionActivated = false
 local curstruct = 1
 local currotyaw = 0
 local remove_obj = false
+local swaplayout = false
 
 local my_shadow = 0
 
@@ -11,6 +12,7 @@ local constructionOffsetCache = {}
 -- Constants
 local ACTIVATE_CONSTRUCTION_KEY = "Y"
 local ACTIVATE_REMOVE_MODE_KEY = "E"
+local SWAP_LAYOUT_KEY = "F"
 local ROTATE_KEY = "R"
 
 function OnKeyPress(key)
@@ -18,6 +20,7 @@ function OnKeyPress(key)
 		if constructionActivated and not remove_obj then CallRemoteEvent("RemoveShadow") end
 		constructionActivated = false
 		remove_obj = false
+		swaplayout = false
 		my_shadow = 0
 		return
 	end
@@ -27,6 +30,7 @@ function OnKeyPress(key)
         if (constructionActivated == false) then
             CallRemoteEvent("RemoveShadow")
 			remove_obj = false
+			swaplayout = false
 			my_shadow = 0
         else
 			CallRemoteEvent("UpdateCons", curstruct)
@@ -42,6 +46,9 @@ function OnKeyPress(key)
 				actor:SetActorHiddenInGame(false)
 			end
         end
+		if key == SWAP_LAYOUT_KEY then
+			swaplayout = not swaplayout
+		end
 	    if key == "Left Mouse Button" then
 			local ScreenX, ScreenY = GetScreenSize()
 			SetMouseLocation(ScreenX/2, ScreenY/2)
@@ -133,8 +140,18 @@ AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset(constructID, stackID)
 	local indexName = constructID .. "stack" .. currotyaw
+	local chosenSelfOffset = nil
 	if stackID == constructID then
-		indexName = constructID .. "selfstack" .. currotyaw
+		local selfOffsetIndex = 1
+		if swaplayout then
+			selfOffsetIndex = 2
+		end
+		if CONSTRUCTION_OBJECTS[constructID].SwapLayout then
+			chosenSelfOffset = CONSTRUCTION_OBJECTS[constructID].SelfOffset[selfOffsetIndex]
+		else
+			chosenSelfOffset = CONSTRUCTION_OBJECTS[constructID].SelfOffset
+		end
+		indexName = constructID .. "selfstack" .. currotyaw .. "swap" .. selfOffsetIndex
 	end
 	if constructionOffsetCache[indexName] == nil then
 		local yawcos = math.cos(math.rad(currotyaw))
@@ -155,11 +172,11 @@ function getConstructOffset(constructID, stackID)
 			xglobaloff = -1 * xglobaloff
 			yglobaloff = -1 * yglobaloff
 			zglobaloff = 0
-			xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
-			yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawsin
-			xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawcos
-			yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawsin
-			zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
+			xxselfoff = chosenSelfOffset * yawcos
+			yxselfoff = chosenSelfOffset * yawsin
+			xyselfoff = chosenSelfOffset * yawcos
+			yyselfoff = chosenSelfOffset * yawsin
+			zselfoff = chosenSelfOffset
 		end
 		constructionOffsetCache[indexName] = {}
 		constructionOffsetCache[indexName].xpos = xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff
