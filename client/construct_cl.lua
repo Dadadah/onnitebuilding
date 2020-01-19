@@ -172,11 +172,11 @@ function getConstructOffset(constructID, stackID)
 			xglobaloff = -1 * xglobaloff
 			yglobaloff = -1 * yglobaloff
 			zglobaloff = 0
-			xxselfoff = chosenSelfOffset * yawcos
-			yxselfoff = chosenSelfOffset * yawsin
-			xyselfoff = chosenSelfOffset * yawcos
-			yyselfoff = chosenSelfOffset * yawsin
-			zselfoff = chosenSelfOffset
+			xxselfoff = chosenSelfOffset[1] * yawcos
+			yxselfoff = chosenSelfOffset[1] * yawsin
+			xyselfoff = chosenSelfOffset[2] * yawcos
+			yyselfoff = chosenSelfOffset[2] * yawsin
+			zselfoff = chosenSelfOffset[3]
 		end
 		constructionOffsetCache[indexName] = {}
 		constructionOffsetCache[indexName].xpos = xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff
