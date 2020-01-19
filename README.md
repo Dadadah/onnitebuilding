@@ -1,16 +1,29 @@
-# onset-construction
-
-#### Keys
-* Y to toggle construction
-* E to toggle remove your constructions (or all contructions if you are admin in construct.lua)
-* R to rotate your construction
-* mouse wheel to change your object
-* left click to place your object
-
-#### Informations
-* This mod can have conflicts with others packages and bugs
-* you can add objects in construct.lua ( line 8 )
-* you can change remove_objs_cons (does the mod remove all objects created by the player who quit the game) at the start of the construct.lua
+# OnniteBuilding
+Onnite Building is a package for Blue Mountains's game Onset designed to mirror the building mechanics of Epic Game's Fortnite.
 
 ## License
-This code is licensed by [GNU GPL-V3](https://github.com/Dadadah/onset-construction/blob/master/LICENSE)
+This code is licensed by [GNU GPL-V3](https://github.com/Dadadah/onnitebuilding/blob/master/LICENSE)
+
+## Installation
+To install this package into your Onset server, download the latest release [here](). Put the contents of the release into your server's `packages` folder and add the package to your server's `server_config.json`.
+
+## Configuration
+There are two configuration variables that you should change. Both of these variables can be found on the top of [server/construct.lua](https://github.com/Dadadah/onnitebuilding/blob/master/server/construct.lua). The first is `admins_remove`. This is a list of accounts that can remove all props. The second is `prop_limit`. This is the maximum constructs that any one player can have.
+
+## In-Game Controls
+| Key         	| Action              	|
+|-------------	|---------------------	|
+| Y           	| Toggle Construction 	|
+| E           	| Toggle Removal Mode 	|
+| R           	| Rotate Construction 	|
+| Mouse Wheel 	| Change Construction 	|
+| Left Click  	| Place Construction  	|
+
+## Contributing
+Contributions are welcome on this project, however they will be expected to be high quality contributions and high quality code. I reserve the right to deny code changes if I choose to do so.
+
+## Bugs/Issues
+If you encounter a bug, please create a GitHub Issue [here](https://github.com/Dadadah/onnitebuilding/issues).
+
+## Known Conflicts
+None so far!

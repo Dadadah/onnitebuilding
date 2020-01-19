@@ -1,9 +1,25 @@
+--[[
+Copyright (C) 2020  Jacob Schlecht
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.]]--
+
 local prop_limit = 100
 
 local admins_remove = {}
 
 --admins_remove["76561197972837186"] = true -- vugi99
---admins_remove["steamid"] = true
+--admins_remove[steamid] = true
 
 local constructions = {}
 local propcount = {}
@@ -107,8 +123,10 @@ function Removeobj(ply, hitentity)
     if v == nil then
         return
     end
-    if (v.owner == steamid or admins_remove[steamid]) then
+    if (v.owner == steamid then
         RemoveConstruction(ply, v.mapobjid)
+    elseif admins_remove[steamid]) then
+        RemoveConstruction(v.owner, v.mapobjid)
     else
         AddPlayerChat(ply, "You can't remove this object")
     end
