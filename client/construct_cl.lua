@@ -152,7 +152,7 @@ function getConstructOffset(constructID, stackID)
 		local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
 		local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
 		local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
-		if stackID ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset[stackID] then
+		if stackID ~= nil and CONSTRUCTION_OBJECTS[stackID].IgnoreGlobalOffset ~= nil and CONSTRUCTION_OBJECTS[stackID].IgnoreGlobalOffset[constructID] then
 			xglobaloff = -1 * xglobaloff
 			yglobaloff = -1 * yglobaloff
 			zglobaloff = -1 * zglobaloff
