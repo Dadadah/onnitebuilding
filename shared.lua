@@ -10,11 +10,7 @@ CONSTRUCTION_OBJECTS[1] = {
     BaseRotation = {0, 0, 180},
     Scale = {2, 2, 2},
     RelativeOffset = {-300, 0, 400},
-    SelfOffset = {
-        {0, 0, 0},
-        {-600, -600, 0}
-    },
-    SwapLayout = true,
+    SelfOffset = {0, 0, 0},
     GlobalOffset = {300, -300, 0}
 }
 CONSTRUCTION_OBJECTS[2] = {
@@ -42,10 +38,7 @@ CONSTRUCTION_OBJECTS[4] = {
     BaseRotation = {0, 0, 0},
     Scale = {0.75, 1, 0.8},
     RelativeOffset = {-300, 0, 0},
-    SelfOffset = {
-        {0, 0, 0},
-        {-600, -600, 0}
-    },
+    SelfOffset = {0, 0, 0},
     SwapLayout = true,
     GlobalOffset = {300, -300, 0}
 }
@@ -54,10 +47,7 @@ CONSTRUCTION_OBJECTS[5] = {
     BaseRotation = {0, 0, 0},
     Scale = {0.75, 1, 0.8},
     RelativeOffset = {-300, 0, 0},
-    SelfOffset = {
-        {0, 0, 0},
-        {-600, -600, 0}
-    },
+    SelfOffset = {0, 0, 0},
     SwapLayout = true,
     GlobalOffset = {300, -300, 0}
 }
