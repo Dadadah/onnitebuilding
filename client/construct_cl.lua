@@ -12,7 +12,6 @@ local constructionOffsetCache = {}
 -- Constants
 local ACTIVATE_CONSTRUCTION_KEY = "Y"
 local ACTIVATE_REMOVE_MODE_KEY = "E"
-local SWAP_LAYOUT_KEY = "F"
 local ROTATE_KEY = "R"
 
 function OnKeyPress(key)
@@ -20,7 +19,6 @@ function OnKeyPress(key)
 		if constructionActivated and not remove_obj then CallRemoteEvent("RemoveShadow") end
 		constructionActivated = false
 		remove_obj = false
-		swaplayout = false
 		my_shadow = 0
 		return
 	end
@@ -30,7 +28,6 @@ function OnKeyPress(key)
         if (constructionActivated == false) then
             CallRemoteEvent("RemoveShadow")
 			remove_obj = false
-			swaplayout = false
 			my_shadow = 0
         else
 			CallRemoteEvent("UpdateCons", curstruct)
@@ -46,9 +43,6 @@ function OnKeyPress(key)
 				actor:SetActorHiddenInGame(false)
 			end
         end
-		if key == SWAP_LAYOUT_KEY then
-			swaplayout = not swaplayout
-		end
 	    if key == "Left Mouse Button" then
 			local ScreenX, ScreenY = GetScreenSize()
 			SetMouseLocation(ScreenX/2, ScreenY/2)
@@ -139,19 +133,9 @@ end
 AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset(constructID, stackID)
-	local indexName = constructID .. "stack" .. currotyaw
-	local chosenSelfOffset = nil
-	if stackID == constructID then
-		local selfOffsetIndex = 1
-		if swaplayout then
-			selfOffsetIndex = 2
-		end
-		if CONSTRUCTION_OBJECTS[constructID].SwapLayout then
-			chosenSelfOffset = CONSTRUCTION_OBJECTS[constructID].SelfOffset[selfOffsetIndex]
-		else
-			chosenSelfOffset = CONSTRUCTION_OBJECTS[constructID].SelfOffset
-		end
-		indexName = constructID .. "selfstack" .. currotyaw .. "swap" .. selfOffsetIndex
+	local indexName = constructID .. "_" .. currotyaw
+	if stackID ~= nil then
+		indexName = constructID .. "_" .. stackID .. "_" .. currotyaw
 	end
 	if constructionOffsetCache[indexName] == nil then
 		local yawcos = math.cos(math.rad(currotyaw))
@@ -168,6 +152,11 @@ function getConstructOffset(constructID, stackID)
 		local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
 		local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
 		local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
+		if stackID ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset[stackID] then
+			xglobaloff = 0
+			yglobaloff = 0
+			zglobaloff = 0
+		end
 		if stackID == constructID then
 			xglobaloff = -1 * xglobaloff
 			yglobaloff = -1 * yglobaloff
