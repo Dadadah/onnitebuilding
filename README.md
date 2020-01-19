@@ -5,7 +5,7 @@ Onnite Building is a package for Blue Mountains's game Onset designed to mirror 
 This code is licensed by [GNU GPL-V3](https://github.com/Dadadah/onnitebuilding/blob/master/LICENSE)
 
 ## Installation
-To install this package into your Onset server, download the latest release [here](). Put the contents of the release into your server's `packages` folder and add the package to your server's `server_config.json`.
+To install this package into your Onset server, download the latest release [here](https://github.com/Dadadah/onnitebuilding/releases). Put the contents of the release into your server's `packages` folder and add the package to your server's `server_config.json`.
 
 ## Configuration
 There are two configuration variables that you should change. Both of these variables can be found on the top of [server/construct.lua](https://github.com/Dadadah/onnitebuilding/blob/master/server/construct.lua). The first is `admins_remove`. This is a list of accounts that can remove all props. The second is `prop_limit`. This is the maximum constructs that any one player can have.
