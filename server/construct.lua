@@ -1,18 +1,35 @@
-local remove_objs_cons = true -- does the mod remove all objects created by the player who quit the game
+--[[
+Copyright (C) 2020  Jacob Schlecht
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.]]--
+
+local prop_limit = 100
 
 local admins_remove = {}
 
 --admins_remove["76561197972837186"] = true -- vugi99
---admins_remove["steamid"] = true
+--admins_remove[steamid] = true
 
 local constructions = {}
+local propcount = {}
 
 local shadows = {}
 
 function rshadow(ply)
     if (shadows[ply]) then
         DestroyObject(shadows[ply].mapobjid)
-        table.remove(shadows, ply)
+        shadows[ply] = nil
     end
  end
  AddRemoteEvent("RemoveShadow",rshadow)
@@ -39,7 +56,7 @@ function upcons(ply, conid)
     if (shadows[ply]) then
         if (shadows[ply].objid ~= conid) then
             DestroyObject(shadows[ply].mapobjid)
-            table.remove(shadows, ply)
+            shadows[ply] = nil
             constructshadow(ply, conid)
         end
     else
@@ -50,24 +67,34 @@ AddRemoteEvent("UpdateCons", upcons)
 
 function OnPlayerQuit(ply)
     rshadow(ply)
-    if (remove_objs_cons == true) then
-        local steamid = tostring(GetPlayerSteamId(ply))
+    local steamid = tostring(GetPlayerSteamId(ply))
 
-        for k, v in pairs(constructions) do
-            if v.owner == steamid then
-                RemoveConstruction(k)
-            end
+    for k, v in pairs(constructions) do
+        if v.owner == steamid then
+            RemoveConstruction(ply, k)
         end
     end
+    propcount[ply] = nil
 end
 AddEvent("OnPlayerQuit", OnPlayerQuit)
 
+function OnPlayerJoin(ply)
+    propcount[ply] = 0
+end
+AddEvent("OnPlayerJoin", OnPlayerJoin)
+
 function Createobj(ply, x, y, z, pitch, yaw, roll)
     if (shadows[ply]) then
+        if propcount[ply] >= prop_limit then
+            AddPlayerChat(ply, "Prop limit reached")
+            return
+        end
         local tbltoinsert = {}
         tbltoinsert.mapobjid = shadows[ply].mapobjid
         tbltoinsert.objid = shadows[ply].objid
         tbltoinsert.owner = tostring(GetPlayerSteamId(ply))
+
+        propcount[ply] = propcount[ply] + 1
 
         -- Move the object to the desired position
         SetObjectLocation(tbltoinsert.mapobjid, x, y, z)
@@ -76,9 +103,15 @@ function Createobj(ply, x, y, z, pitch, yaw, roll)
         -- Disable ghosting on this object
         SetObjectPropertyValue(tbltoinsert.mapobjid, GHOSTED_PROPERTY_NAME, false, true)
 
-        constructions[tbltoinsert.mapobjid] = tbltoinsert
+        if tbltoinsert.objid == 4 then
+            -- Create a door for the door frame construct.
+            -- The yaw for the door is rotated 90 degrees.
+            -- The sin-cos(rad(yaw)) * 507 is to move the door to the correct location relative to the construct
+            tbltoinsert.door = CreateDoor(3, x - (math.sin(math.rad(yaw - 90)) * 507) + (math.cos(math.rad(yaw - 90))), y + (math.cos(math.rad(yaw - 90)) * 507) + (math.sin(math.rad(yaw - 90))), z - 27, yaw - 90, true)
+        end
 
-        table.remove(shadows, ply)
+        constructions[tbltoinsert.mapobjid] = tbltoinsert
+        shadows[ply] = nil
     end
 end
 AddRemoteEvent("Createcons", Createobj)
@@ -89,15 +122,19 @@ function Removeobj(ply, hitentity)
     if v == nil then
         return
     end
-    if (v.owner == steamid or admins_remove[steamid]) then
-        RemoveConstruction(v.mapobjid)
+    if (v.owner == steamid then
+        RemoveConstruction(ply, v.mapobjid)
+    elseif admins_remove[steamid]) then
+        RemoveConstruction(v.owner, v.mapobjid)
     else
         AddPlayerChat(ply, "You can't remove this object")
     end
 end
 AddRemoteEvent("Removeobj", Removeobj)
 
-function RemoveConstruction(constructionID)
+function RemoveConstruction(ply, constructionID)
+    propcount[ply] = propcount[ply] - 1
     DestroyObject(constructionID)
+    if constructions[constructionID].door ~= nil then DestroyDoor(constructions[constructionID].door) end
     constructions[constructionID] = nil
 end

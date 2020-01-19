@@ -1,10 +1,28 @@
+--[[
+Copyright (C) 2020  Jacob Schlecht
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.]]--
 
 local constructionActivated = false
 local curstruct = 1
 local currotyaw = 0
 local remove_obj = false
+local swaplayout = false
 
 local my_shadow = 0
+
+local constructionOffsetCache = {}
 
 -- Constants
 local ACTIVATE_CONSTRUCTION_KEY = "Y"
@@ -12,6 +30,13 @@ local ACTIVATE_REMOVE_MODE_KEY = "E"
 local ROTATE_KEY = "R"
 
 function OnKeyPress(key)
+	if IsPlayerDead() or IsPlayerInVehicle() then
+		if constructionActivated and not remove_obj then CallRemoteEvent("RemoveShadow") end
+		constructionActivated = false
+		remove_obj = false
+		my_shadow = 0
+		return
+	end
 	if key == ACTIVATE_CONSTRUCTION_KEY then
         constructionActivated = not constructionActivated
         if (constructionActivated == false) then
@@ -25,10 +50,11 @@ function OnKeyPress(key)
     if (constructionActivated == true) then
     	if key == ACTIVATE_REMOVE_MODE_KEY then
             remove_obj = not remove_obj
-            if remove_obj then
-				GetObjectActor(my_shadow):SetActorHiddenInGame(true)
+			local actor = GetObjectActor(my_shadow)
+            if remove_obj and actor ~= false then
+				actor:SetActorHiddenInGame(true)
             else
-				GetObjectActor(my_shadow):SetActorHiddenInGame(false)
+				actor:SetActorHiddenInGame(false)
 			end
         end
 	    if key == "Left Mouse Button" then
@@ -38,22 +64,33 @@ function OnKeyPress(key)
             if (remove_obj == false) then
 				local x, y, z = GetMouseHitLocation()
 				if (x ~= 0) then
-					local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-					local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-					if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-						x, y, z = GetObjectLocation(entityId)
-						local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-						xpos = xpos + xsub
-						ypos = ypos + ysub
-						zpos = zpos - zsub
+					-- Distance Check
+					local xply, yply, zply = GetPlayerLocation()
+					if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
+						local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+						local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+						if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+							x, y, z = GetObjectLocation(entityId)
+							local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+							xpos = xpos + xsub
+							ypos = ypos + ysub
+							zpos = zpos - zsub
+						end
+						-- Uncomment to get size of a new object
+						-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
+						-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
+		            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
+						CallRemoteEvent("UpdateCons", curstruct)
+
+						-- We should probably let them know that roofs don't work like they think they do.
+						if curstruct == 2 then
+							AddPlayerChat("Don't forget to place a floor on top of your roof")
+						end
+					else
+						AddPlayerChat("That's too far away")
 					end
-					-- Uncomment to get size of a new object
-					-- local xsize, ysize, zsize = GetObjectSize(my_shadow)
-					-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
-	            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
-					CallRemoteEvent("UpdateCons", curstruct)
 				else
-					AddPlayerChat("Please look at valid locations")
+					AddPlayerChat("Invalid location")
 				end
             else
                 if (entityId ~= 0) then
@@ -69,8 +106,8 @@ function OnKeyPress(key)
 				my_shadow = 0
 			end
 			if key == "Mouse Wheel Down" then
-				curstruct = curstruct + 1
-				curstruct = (curstruct % #CONSTRUCTION_OBJECTS) + 1
+				curstruct = curstruct - 1
+				curstruct = ((curstruct - 1) % #CONSTRUCTION_OBJECTS) + 1
 				CallRemoteEvent("UpdateCons", curstruct)
 				my_shadow = 0
 			end
@@ -87,55 +124,79 @@ function tickhook(DeltaSeconds)
     if (constructionActivated) and (not remove_obj) and (my_shadow ~= 0) and (not IsPlayerInMainMenu()) then
 		local actor = GetObjectActor(my_shadow)
 		if not actor then return end
-
 		local ScreenX, ScreenY = GetScreenSize()
 		SetMouseLocation(ScreenX/2, ScreenY/2)
 		local x, y, z = GetMouseHitLocation()
-		local _, entityId = GetMouseHitEntity()
-		local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-		local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-		if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-			x, y, z = GetObjectLocation(entityId)
-			local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-			xpos = xpos + xsub
-			ypos = ypos + ysub
-			zpos = zpos - zsub
+
+		-- Distance Check
+		local xply, yply, zply = GetPlayerLocation()
+		if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
+			local _, entityId = GetMouseHitEntity()
+			local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+			local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+			if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+				x, y, z = GetObjectLocation(entityId)
+				local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+				xpos = xpos + xsub
+				ypos = ypos + ysub
+				zpos = zpos - zsub
+			end
+			actor:SetActorHiddenInGame(false)
+			actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
+			actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
+		else
+			actor:SetActorHiddenInGame(true)
 		end
-		actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
-		actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
 	end
 end
 AddEvent("OnGameTick", tickhook)
 
 function getConstructOffset(constructID, stackID)
-	local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.cos(math.rad(currotyaw))
-	local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * math.sin(math.rad(currotyaw))
-	local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.cos(math.rad(currotyaw))
-	local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * math.sin(math.rad(currotyaw))
-	local xxselfoff = 0
-	local yxselfoff = 0
-	local xyselfoff = 0
-	local yyselfoff = 0
-	local zselfoff = 0
-	local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * math.sin(math.rad(currotyaw))
-	local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * math.cos(math.rad(currotyaw))
-	local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
-	if stackID == constructID then
-		xglobaloff = -1 * xglobaloff
-		yglobaloff = -1 * yglobaloff
-		zglobaloff = 0
-		xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.cos(math.rad(currotyaw))
-		yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * math.sin(math.rad(currotyaw))
-		xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.cos(math.rad(currotyaw))
-		yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * math.sin(math.rad(currotyaw))
-		zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
+	local indexName = constructID .. "_" .. currotyaw
+	if stackID ~= nil then
+		indexName = constructID .. "_" .. stackID .. "_" .. currotyaw
 	end
-	return xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff, -- XPos
-	yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff, -- YPos
-	CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff - zselfoff, -- ZPos
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[1], -- Pitch
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[2], -- Yaw
-	CONSTRUCTION_OBJECTS[constructID].BaseRotation[3] -- Roll
+	if constructionOffsetCache[indexName] == nil then
+		local yawcos = math.cos(math.rad(currotyaw))
+		local yawsin = math.sin(math.rad(currotyaw))
+		local xxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawcos
+		local yxoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[1] * yawsin
+		local xyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawcos
+		local yyoff = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[2] * yawsin
+		local xxselfoff = 0
+		local yxselfoff = 0
+		local xyselfoff = 0
+		local yyselfoff = 0
+		local zselfoff = 0
+		local xglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[1] * yawsin
+		local yglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[2] * yawcos
+		local zglobaloff = CONSTRUCTION_OBJECTS[constructID].GlobalOffset[3]
+		if stackID ~= nil and CONSTRUCTION_OBJECTS[stackID].IgnoreGlobalOffset ~= nil and CONSTRUCTION_OBJECTS[stackID].IgnoreGlobalOffset[constructID] then
+			xglobaloff = -1 * xglobaloff
+			yglobaloff = -1 * yglobaloff
+			zglobaloff = 0
+		end
+		if stackID == constructID then
+			xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
+			yxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawsin
+			xyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawcos
+			yyselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[2] * yawsin
+			zselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[3]
+		end
+		constructionOffsetCache[indexName] = {}
+		constructionOffsetCache[indexName].xpos = xxoff + xyoff + xglobaloff + xxselfoff + xyselfoff
+		constructionOffsetCache[indexName].ypos = yyoff + yxoff + yglobaloff + yyselfoff + yxselfoff
+		constructionOffsetCache[indexName].zpos = CONSTRUCTION_OBJECTS[constructID].RelativeOffset[3] + zglobaloff - zselfoff
+		constructionOffsetCache[indexName].pitch = CONSTRUCTION_OBJECTS[constructID].BaseRotation[1]
+		constructionOffsetCache[indexName].yaw = CONSTRUCTION_OBJECTS[constructID].BaseRotation[2]
+		constructionOffsetCache[indexName].roll = CONSTRUCTION_OBJECTS[constructID].BaseRotation[3]
+	end
+	return constructionOffsetCache[indexName].xpos, -- XPos
+	constructionOffsetCache[indexName].ypos, -- YPos
+	constructionOffsetCache[indexName].zpos, -- ZPos
+	constructionOffsetCache[indexName].pitch, -- Pitch
+	constructionOffsetCache[indexName].yaw, -- Yaw
+	constructionOffsetCache[indexName].roll -- Roll
 end
 
 function GhostNewObject(object)
@@ -172,14 +233,14 @@ end
 AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
 function render_cons()
+	SetDrawColor(RGBA(0, 0, 0, 255))
+	SetTextDrawScale(1.25, 1.25)
+	DrawText(5, 400, "Y - Toggle Construction")
     if constructionActivated then
-		SetDrawColor(RGBA(0, 0, 0, 255))
-		SetTextDrawScale(1, 1)
-	    DrawText(5, 400, "Press Y to toggle construction")
-	    DrawText(5, 425, "Press E to toggle remove constructions")
-	    DrawText(5, 450, "Press R to rotate your construction")
-	    DrawText(5, 475, "Use the mouse wheel to change your object")
-	    DrawText(5, 500, "Use the left click to place your object")
+	    DrawText(5, 425, "E - Removal Mode")
+	    DrawText(5, 450, "R - Rotate 90 Degrees")
+	    DrawText(5, 475, "Mouse Wheel - Switch Construction")
+	    DrawText(5, 500, "Click - Place Construction")
 	    if remove_obj then
 	        local _, entityId = GetMouseHitEntity()
             if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
