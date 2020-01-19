@@ -67,6 +67,11 @@ function OnKeyPress(key)
 						-- AddPlayerChat("size x: " .. xsize .. " y: " .. ysize .. " z: " .. zsize)
 		            	CallRemoteEvent("Createcons", x + xpos, y + ypos, z + zpos, 0 + pitch, currotyaw + yaw, 0 + roll)
 						CallRemoteEvent("UpdateCons", curstruct)
+
+						-- We should probably let them know that roofs don't work like they think they do.
+						if curstruct == 2 then
+							AddPlayerChat("Don't forget to place a floor on top of your roof")
+						end
 					else
 						AddPlayerChat("That's too far away")
 					end
