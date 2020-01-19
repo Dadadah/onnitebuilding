@@ -88,8 +88,14 @@ function Createobj(ply, x, y, z, pitch, yaw, roll)
         -- Disable ghosting on this object
         SetObjectPropertyValue(tbltoinsert.mapobjid, GHOSTED_PROPERTY_NAME, false, true)
 
-        constructions[tbltoinsert.mapobjid] = tbltoinsert
+        if tbltoinsert.objid == 4 then
+            -- Create a door for the door frame construct.
+            -- The yaw for the door is rotated 90 degrees.
+            -- The sin-cos(rad(yaw)) * 507 is to move the door to the correct location relative to the construct
+            tbltoinsert.door = CreateDoor(3, x - (math.sin(math.rad(yaw - 90)) * 507) + (math.cos(math.rad(yaw - 90))), y + (math.cos(math.rad(yaw - 90)) * 507) + (math.sin(math.rad(yaw - 90))), z - 27, yaw - 90, true)
+        end
 
+        constructions[tbltoinsert.mapobjid] = tbltoinsert
         shadows[ply] = nil
     end
 end
@@ -112,5 +118,6 @@ AddRemoteEvent("Removeobj", Removeobj)
 function RemoveConstruction(ply, constructionID)
     propcount[ply] = propcount[ply] - 1
     DestroyObject(constructionID)
+    if constructions[constructionID].door ~= nil then DestroyDoor(constructions[constructionID].door) end
     constructions[constructionID] = nil
 end
