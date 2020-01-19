@@ -214,14 +214,14 @@ end
 AddEvent("OnObjectNetworkUpdatePropertyValue", GhostObject)
 
 function render_cons()
+	SetDrawColor(RGBA(0, 0, 0, 255))
+	SetTextDrawScale(1.25, 1.25)
+	DrawText(5, 400, "Y - Toggle Construction")
     if constructionActivated then
-		SetDrawColor(RGBA(0, 0, 0, 255))
-		SetTextDrawScale(1, 1)
-	    DrawText(5, 400, "Press Y to toggle construction")
-	    DrawText(5, 425, "Press E to toggle remove constructions")
-	    DrawText(5, 450, "Press R to rotate your construction")
-	    DrawText(5, 475, "Use the mouse wheel to change your object")
-	    DrawText(5, 500, "Use the left click to place your object")
+	    DrawText(5, 425, "E           - Removal Mode")
+	    DrawText(5, 450, "R           - Rotate 90 Degrees")
+	    DrawText(5, 475, "Mouse Wheel - Switch Construction")
+	    DrawText(5, 500, "Click       - Place Construction")
 	    if remove_obj then
 	        local _, entityId = GetMouseHitEntity()
             if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
