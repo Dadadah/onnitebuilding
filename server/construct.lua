@@ -122,9 +122,9 @@ function Removeobj(ply, hitentity)
     if v == nil then
         return
     end
-    if (v.owner == steamid then
+    if v.owner == steamid then
         RemoveConstruction(ply, v.mapobjid)
-    elseif admins_remove[steamid]) then
+    elseif admins_remove[steamid] then
         RemoveConstruction(v.owner, v.mapobjid)
     else
         AddPlayerChat(ply, "You can't remove this object")
