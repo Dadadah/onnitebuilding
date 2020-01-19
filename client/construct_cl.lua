@@ -155,7 +155,7 @@ function getConstructOffset(constructID, stackID)
 		if stackID ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset ~= nil and CONSTRUCTION_OBJECTS[constructID].IgnoreGlobalOffset[stackID] then
 			xglobaloff = -1 * xglobaloff
 			yglobaloff = -1 * yglobaloff
-			zglobaloff = 0
+			zglobaloff = -1 * zglobaloff
 		end
 		if stackID == constructID then
 			xxselfoff = CONSTRUCTION_OBJECTS[constructID].SelfOffset[1] * yawcos
