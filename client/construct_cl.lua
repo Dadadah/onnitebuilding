@@ -277,9 +277,9 @@ function GetAimPosHitLocation(distanceFromPlayer)
 	local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
 	-- Do another linetrace if we hit local player because linetrace hits local player for some reason
 	if hittype == HIT_PLAYER and hitid == GetPlayerId() then
-		x = impactX + camx * 30
-		y = impactY + camy * 30
-		z = impactZ + camz * 30
+		x = impactX + camx * 50
+		y = impactY + camy * 50
+		z = impactZ + camz * 50
 		local endX = x + camx * distanceFromPlayer
 		local endY = y + camy * distanceFromPlayer
 		local endZ = z + camz * distanceFromPlayer
@@ -312,9 +312,9 @@ function GetAimPosHitEntity()
 	local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
 	-- Do another linetrace if we hit local player because linetrace hits local player for some reason
 	if hittype == HIT_PLAYER and hitid == GetPlayerId() then
-		x = impactX + camx * 30
-		y = impactY + camy * 30
-		z = impactZ + camz * 30
+		x = impactX + camx * 50
+		y = impactY + camy * 50
+		z = impactZ + camz * 50
 		local endX = x + camx * distanceFromPlayer
 		local endY = y + camy * distanceFromPlayer
 		local endZ = z + camz * distanceFromPlayer
