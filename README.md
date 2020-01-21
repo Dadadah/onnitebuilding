@@ -28,4 +28,5 @@ Contributions are welcome on this project, however they will be expected to be h
 If you encounter a bug, please create a GitHub Issue [here](https://github.com/Dadadah/onnitebuilding/issues).
 
 ## Known Conflicts
-None so far!
+This mod conflicts with the following mod(s):
+* onset-construction
