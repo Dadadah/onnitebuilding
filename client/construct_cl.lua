@@ -47,7 +47,7 @@ function OnKeyPress(key)
 			CallRemoteEvent("UpdateCons", curstruct)
 		end
     end
-    if (constructionActivated == true) then
+    if constructionActivated then
     	if key == ACTIVATE_REMOVE_MODE_KEY then
             remove_obj = not remove_obj
 			local actor = GetObjectActor(my_shadow)
@@ -58,12 +58,10 @@ function OnKeyPress(key)
 			end
         end
 	    if key == "Left Mouse Button" then
-			local ScreenX, ScreenY = GetScreenSize()
-			SetMouseLocation(ScreenX/2, ScreenY/2)
-			local _, entityId = GetMouseHitEntity()
-            if (remove_obj == false) then
-				local x, y, z = GetMouseHitLocation()
-				if (x ~= 0) then
+			local _, entityId = GetAimPosHitEntity(2000)
+			if not remove_obj then
+				local x, y, z = GetAimPosHitLocation(2000)
+				if x then
 					-- Distance Check
 					local xply, yply, zply = GetPlayerLocation()
 					if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
@@ -124,28 +122,29 @@ function tickhook(DeltaSeconds)
     if (constructionActivated) and (not remove_obj) and (my_shadow ~= 0) and (not IsPlayerInMainMenu()) then
 		local actor = GetObjectActor(my_shadow)
 		if not actor then return end
-		local ScreenX, ScreenY = GetScreenSize()
-		SetMouseLocation(ScreenX/2, ScreenY/2)
-		local x, y, z = GetMouseHitLocation()
-
-		-- Distance Check
-		local xply, yply, zply = GetPlayerLocation()
-		if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
-			local _, entityId = GetMouseHitEntity()
-			local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
-			local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
-			if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
-				x, y, z = GetObjectLocation(entityId)
-				local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
-				xpos = xpos + xsub
-				ypos = ypos + ysub
-				zpos = zpos - zsub
+		local x, y, z = GetAimPosHitLocation(2000)
+		if x then
+			-- Distance Check
+			local xply, yply, zply = GetPlayerLocation()
+			if GetDistance3D(x, y, z, xply, yply, zply) < 2000 then
+				local hittype, entityId = GetAimPosHitEntity(2000)
+				if hittype then
+					local entConID = GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME)
+					local xpos, ypos, zpos, pitch, yaw, roll = getConstructOffset(curstruct)
+					if entConID ~= nil and GetObjectPropertyValue(entityId, OWNER_PROPERTY_NAME) == GetPlayerId() then
+						x, y, z = GetObjectLocation(entityId)
+						local xsub, ysub, zsub = getConstructOffset(entConID, curstruct)
+						xpos = xpos + xsub
+						ypos = ypos + ysub
+						zpos = zpos - zsub
+					end
+					actor:SetActorHiddenInGame(false)
+					actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
+					actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
+				end
+			else
+				actor:SetActorHiddenInGame(true)
 			end
-			actor:SetActorHiddenInGame(false)
-			actor:SetActorLocation(FVector(x + xpos, y + ypos, z + zpos))
-			actor:SetActorRotation(FRotator(0 + pitch, currotyaw + yaw,	0 + roll))
-		else
-			actor:SetActorHiddenInGame(true)
 		end
 	end
 end
@@ -242,8 +241,8 @@ function render_cons()
 	    DrawText(5, 475, "Mouse Wheel - Switch Construction")
 	    DrawText(5, 500, "Click - Place Construction")
 	    if remove_obj then
-	        local _, entityId = GetMouseHitEntity()
-            if entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
+	        local hittype, entityId = GetAimPosHitEntity(2000)
+            if hittype and entityId ~= 0 and GetObjectPropertyValue(entityId, CONSTRUCTION_ID_PROPERTY_NAME) ~= nil then
                 local x, y, z = GetObjectLocation(entityId)
                 local bResult, ScreenX, ScreenY = WorldToScreen(x, y, z)
                 if bResult then
@@ -254,3 +253,71 @@ function render_cons()
     end
 end
 AddEvent("OnRenderHUD", render_cons)
+
+--[[
+This function will get the aim pos hit location of the local player.
+
+When the aimpos hits air at distanceFromPlayer then this function will return false.
+
+We must do two line traces if the first hits the local player. I'm not sure if
+this is a bug so we'll just workaround it.
+
+If the player is looking down on themselves in first person I guess it won't
+work but OH WELL /shrug
+]]--
+function GetAimPosHitLocation(distanceFromPlayer)
+	if distanceFromPlayer == nil then distanceFromPlayer = 10000 end
+	local ScreenX, ScreenY = GetScreenSize()
+	local x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	local camx, camy, camz = GetCameraForwardVector()
+	local endX = x + camx * distanceFromPlayer
+	local endY = y + camy * distanceFromPlayer
+	local endZ = z + camz * distanceFromPlayer
+	local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
+	-- Do another linetrace if we hit local player because linetrace hits local player for some reason
+	if hittype == HIT_PLAYER and hitid == GetPlayerId() then
+		x = impactX + camx * 30
+		y = impactY + camy * 30
+		z = impactZ + camz * 30
+		local endX = x + camx * distanceFromPlayer
+		local endY = y + camy * distanceFromPlayer
+		local endZ = z + camz * distanceFromPlayer
+		hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
+	end
+	if hittype == HIT_AIR then return false end
+	return impactX, impactY, impactZ
+end
+
+--[[
+This function will get the aim pos hit entity of the local player.
+
+When the aimpos hits air at distanceFromPlayer then this function will return false.
+
+We must do two line traces if the first hits the local player. I'm not sure if
+this is a bug so we'll just workaround it.
+
+If the player is looking down on themselves in first person I guess it won't
+work but OH WELL /shrug
+]]--
+function GetAimPosHitEntity()
+	if distanceFromPlayer == nil then distanceFromPlayer = 10000 end
+	local ScreenX, ScreenY = GetScreenSize()
+	local x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	local camx, camy, camz = GetCameraForwardVector()
+	local endX = x + camx * distanceFromPlayer
+	local endY = y + camy * distanceFromPlayer
+	local endZ = z + camz * distanceFromPlayer
+	local hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
+	-- Do another linetrace if we hit local player because linetrace hits local player for some reason
+	if hittype == HIT_PLAYER and hitid == GetPlayerId() then
+		x = impactX + camx * 30
+		y = impactY + camy * 30
+		z = impactZ + camz * 30
+		local endX = x + camx * distanceFromPlayer
+		local endY = y + camy * distanceFromPlayer
+		local endZ = z + camz * distanceFromPlayer
+		hittype, hitid, impactX, impactY, impactZ = LineTrace(x, y, z, endX, endY, endZ)
+	end
+	if hittype == HIT_AIR then return false end
+	return hittype, hitid
+end
