@@ -268,7 +268,8 @@ work but OH WELL /shrug
 function GetAimPosHitLocation(distanceFromPlayer)
 	if distanceFromPlayer == nil then distanceFromPlayer = 10000 end
 	local ScreenX, ScreenY = GetScreenSize()
-	local x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	local res, x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	if not res then return false end
 	local camx, camy, camz = GetCameraForwardVector()
 	local endX = x + camx * distanceFromPlayer
 	local endY = y + camy * distanceFromPlayer
@@ -302,7 +303,8 @@ work but OH WELL /shrug
 function GetAimPosHitEntity()
 	if distanceFromPlayer == nil then distanceFromPlayer = 10000 end
 	local ScreenX, ScreenY = GetScreenSize()
-	local x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	local res, x, y, z = ScreenToWorld(ScreenX / 2, ScreenY/2)
+	if not res then return false end
 	local camx, camy, camz = GetCameraForwardVector()
 	local endX = x + camx * distanceFromPlayer
 	local endY = y + camy * distanceFromPlayer
